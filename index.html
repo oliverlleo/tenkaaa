@@ -175,9 +175,9 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 /* ---------- mobile ---------- */
 @media(max-width:900px){
   :root{
-    /* Real gesture-sized travel: one intentional swipe per narrative beat. */
-    --transform-travel:clamp(1260px,204svh,1860px);
-    --insight-travel:clamp(640px,95svh,860px);
+    /* Enough room for the three narrative beats without making the page feel trapped. */
+    --transform-travel:clamp(1000px,165svh,1450px);
+    --insight-travel:clamp(500px,72svh,680px);
   }
   .nav-links{display:none}.menu-btn{display:block}
   /* Mobile: preserve the cinematic choreography without trapping the swipe.
@@ -536,23 +536,19 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   gsap.set(tsteps,{yPercent:-50,y:0});
   const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1}});
   if (mobileLayout) {
-    // Touch choreography is deliberately divided into three gesture-sized beats:
-    // 1) Entender -> Traduzir, 2) Traduzir -> Habitar, 3) only then release to the next section.
-    // Habitar arrives around the middle of the scroll range and gets a real hold zone afterward,
-    // preventing the same swipe that reveals it from also unlocking the following scene.
+    // Three clear mobile beats without the sensation that the page is holding the user back:
+    // Entender -> Traduzir, Traduzir -> Habitar, then a short Habitar hold before release.
     transformTl
-      .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none',duration:.24},0)
-      .to(tsteps[0],{opacity:0,y:-55,duration:.055},.11)
-      .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.11,ease:'none'},.12)
-      .fromTo(tsteps[1],{opacity:0,y:55},{opacity:1,y:0,duration:.065},.18)
-      .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none',duration:.20},.20)
-      .to(tsteps[1],{opacity:0,y:-55,duration:.055},.36)
-      .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.11,ease:'none'},.37)
-      .fromTo(tsteps[2],{opacity:0,y:55},{opacity:1,y:0,duration:.065},.44)
-      // Keep Habitar visually alive while the remaining scroll distance acts as the deliberate
-      // third gesture needed to leave this pinned scene.
-      .to('.transform-layer.l3',{scale:1.08,xPercent:-1,ease:'none',duration:.20},.48)
-      .to('.transform-meter span',{height:'100%',duration:.94,ease:'none'},0);
+      .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none',duration:.28},0)
+      .to(tsteps[0],{opacity:0,y:-55,duration:.06},.20)
+      .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.12,ease:'none'},.22)
+      .fromTo(tsteps[1],{opacity:0,y:55},{opacity:1,y:0,duration:.07},.28)
+      .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none',duration:.18},.30)
+      .to(tsteps[1],{opacity:0,y:-55,duration:.06},.50)
+      .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.12,ease:'none'},.52)
+      .fromTo(tsteps[2],{opacity:0,y:55},{opacity:1,y:0,duration:.07},.60)
+      .to('.transform-layer.l3',{scale:1.08,xPercent:-1,ease:'none',duration:.18},.66)
+      .to('.transform-meter span',{height:'100%',duration:1,ease:'none'},0);
   } else {
     transformTl
       .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none'},0)
