@@ -450,9 +450,14 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     }
     // Fallback for old browsers: keep the largest height observed for this orientation,
     // never a smaller transient height caused by browser chrome.
-    const stored = Number(document.documentElement.dataset.sceneHeight || 0);
+    const orientationKey = innerWidth > innerHeight ? 'landscape' : 'portrait';
+    const previousOrientation = document.documentElement.dataset.sceneOrientation;
+    const stored = previousOrientation === orientationKey
+      ? Number(document.documentElement.dataset.sceneHeight || 0)
+      : 0;
     const vv = window.visualViewport?.height || 0;
     const next = Math.max(stored, window.innerHeight, vv);
+    document.documentElement.dataset.sceneOrientation = orientationKey;
     document.documentElement.dataset.sceneHeight = String(next);
     document.documentElement.style.setProperty('--scene-h', `${next}px`);
   };
