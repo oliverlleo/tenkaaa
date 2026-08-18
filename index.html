@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#B66343" />
+<title>TENKA — Arquitetura & Interiores</title>
+<meta name="description" content="TENKA Arquitetura — projetos, reformas e acompanhamento em Sorocaba. Fazemos casa com cara de lar." />
+<link rel="preconnect" href="https://images.unsplash.com" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<style>
+:root{
+  --terracotta:#B66343;
+  --terracotta-dark:#87462F;
+  --clay:#C98767;
+  --cream:#F3EEE7;
+  --paper:#F8F5F0;
+  --sand:#D9C8B8;
+  --ink:#1E1A17;
+  --muted:#746B64;
+  --line:rgba(30,26,23,.14);
+  --vh:1vh;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto;background:var(--paper);overflow-anchor:none}
+body{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper);overflow-x:hidden}
+body.locked{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+img{display:block;width:100%;height:100%;object-fit:cover}
+::selection{background:var(--terracotta);color:#fff}
+
+/* ---------- global ---------- */
+.noise{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.05;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E")}
+.cursor,.cursor-dot{position:fixed;left:0;top:0;pointer-events:none;z-index:1000;border-radius:50%;transform:translate(-50%,-50%);display:none}
+.cursor{width:44px;height:44px;border:1px solid rgba(30,26,23,.42);transition:width .25s,height .25s,border-color .25s,background .25s}
+.cursor-dot{width:5px;height:5px;background:var(--ink)}
+.cursor.active{width:78px;height:78px;background:rgba(182,99,67,.12);border-color:var(--terracotta)}
+@media(pointer:fine){.cursor,.cursor-dot{display:block}body{cursor:none}a,button{cursor:none}}
+
+.container{width:min(1240px,calc(100% - 48px));margin-inline:auto}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+.serif{font-family:Georgia,"Times New Roman",serif;font-weight:400}
+
+/* ---------- loader ---------- */
+.loader{position:fixed;inset:0;z-index:999;background:var(--terracotta);display:grid;place-items:center;color:#fff}
+.loader-inner{text-align:center}
+.loader-logo{width:96px;height:96px;margin:0 auto 22px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.08))}
+.loader-mark path,.loader-mark line,.loader-mark polyline{stroke-dasharray:220;stroke-dashoffset:220}
+.loader-word{font-size:13px;letter-spacing:.28em;text-transform:uppercase;opacity:.9}
+.loader-progress{width:160px;height:1px;background:rgba(255,255,255,.26);margin:18px auto 0;overflow:hidden}
+.loader-progress span{display:block;width:100%;height:100%;background:#fff;transform:scaleX(0);transform-origin:left}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;left:0;right:0;top:0;z-index:90;padding:24px 0;color:#fff;mix-blend-mode:difference;transition:padding .35s ease}
+.nav-inner{width:min(1240px,calc(100% - 48px));margin:auto;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:13px;font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+.brand-mark{width:34px;height:34px;flex:none}
+.nav-links{display:flex;gap:32px;align-items:center;font-size:12px;letter-spacing:.06em}
+.nav-link{position:relative;padding:8px 0}
+.nav-link:after{content:"";position:absolute;left:0;bottom:2px;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s ease}
+.nav-link:hover:after{transform:scaleX(1);transform-origin:left}
+.menu-btn{display:none;background:none;border:0;width:42px;height:42px;position:relative}
+.menu-btn span{position:absolute;left:9px;width:24px;height:1px;background:currentColor;transition:.3s}.menu-btn span:first-child{top:16px}.menu-btn span:last-child{top:25px}
+
+/* ---------- hero ---------- */
+.hero{height:260vh;position:relative;background:var(--cream)}
+.hero-pin{height:100vh;position:sticky;top:0;overflow:hidden;background:var(--ink)}
+.hero-media{position:absolute;inset:0;overflow:hidden;clip-path:inset(12% 19% round 2px);will-change:clip-path,transform}
+.hero-media img{transform:scale(1.17);filter:saturate(.82) contrast(.95) brightness(.82);will-change:transform}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,15,12,.12),rgba(21,15,12,.18) 45%,rgba(21,15,12,.56));pointer-events:none}
+.hero-grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(12,1fr);gap:18px;width:min(1240px,calc(100% - 48px));margin:auto;align-items:end;padding-bottom:58px;color:#fff}
+.hero-copy{grid-column:1/10;position:relative;z-index:3}
+.hero-kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.hero-kicker:before{content:"";width:42px;height:1px;background:currentColor}
+.hero-title{font-size:clamp(62px,10vw,158px);line-height:.83;letter-spacing:-.07em;max-width:1000px}
+.hero-title .line{display:block;overflow:hidden;padding-bottom:.08em}
+.hero-title .line span{display:block;transform:translateY(115%)}
+.hero-side{grid-column:10/13;align-self:end;padding-bottom:10px;font-size:13px;line-height:1.55;max-width:240px;opacity:.9}
+.scroll-indicator{position:absolute;right:34px;bottom:34px;color:#fff;z-index:4;display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;transform:rotate(90deg);transform-origin:right bottom}
+.scroll-indicator i{display:block;width:52px;height:1px;background:rgba(255,255,255,.55);overflow:hidden;position:relative}.scroll-indicator i:after{content:"";position:absolute;inset:0;background:#fff;animation:scan 1.8s infinite ease-in-out}
+@keyframes scan{0%{transform:translateX(-100%)}50%,100%{transform:translateX(100%)}}
+
+/* ---------- manifesto ---------- */
+.manifesto{background:var(--paper);padding:150px 0 170px;position:relative;overflow:hidden}
+.manifesto-grid{display:grid;grid-template-columns:2fr 8fr 2fr;gap:18px}
+.manifesto .eyebrow{grid-column:1/3;color:var(--terracotta);margin-bottom:48px}
+.manifesto-copy{grid-column:2/12;font-size:clamp(45px,6.6vw,105px);line-height:.96;letter-spacing:-.055em}
+.manifesto-copy .word{display:inline-block;overflow:hidden;vertical-align:bottom}.manifesto-copy .word span{display:inline-block;transform:translateY(105%)}
+.manifesto-note{grid-column:8/12;margin-top:50px;font-size:16px;line-height:1.65;color:var(--muted);max-width:440px}
+
+/* ---------- transformation scrollytelling ---------- */
+.transform-section{height:520vh;position:relative;background:#C7B29D}
+.transform-pin{height:100vh;position:sticky;top:0;overflow:hidden}
+.transform-layer{position:absolute;inset:0;will-change:transform,clip-path,opacity}
+.transform-layer img{filter:saturate(.78) contrast(.94)}
+.transform-layer.l1{clip-path:inset(0 0 0 0)}
+.transform-layer.l2{clip-path:inset(0 0 100% 0)}
+.transform-layer.l3{clip-path:circle(0% at 72% 55%)}
+.transform-vignette{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,15,12,.48) 0%,rgba(20,15,12,.10) 50%,rgba(20,15,12,.28) 100%);z-index:5}
+.transform-copy{position:absolute;z-index:7;left:max(24px,calc((100vw - 1240px)/2));top:50%;transform:translateY(-50%);color:#fff;width:min(620px,75vw)}
+.transform-step{position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:0}
+.transform-step:first-child{opacity:1}
+.step-index{font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:18px;opacity:.74}
+.transform-step h2{font-size:clamp(58px,8vw,122px);letter-spacing:-.06em;line-height:.85;margin-bottom:22px}
+.transform-step p{max-width:400px;font-size:16px;line-height:1.6}
+.transform-meter{position:absolute;z-index:8;right:36px;top:50%;transform:translateY(-50%);height:300px;width:1px;background:rgba(255,255,255,.25)}
+.transform-meter span{position:absolute;left:0;top:0;width:1px;height:33.333%;background:#fff;transform-origin:top}
+
+/* ---------- problem / solution ---------- */
+.insight{height:320vh;background:var(--cream);position:relative}
+.insight-pin{height:100vh;position:sticky;top:0;overflow:hidden;display:grid;grid-template-columns:1.05fr .95fr}
+.insight-stage{position:relative;overflow:hidden}
+.insight-before,.insight-after{position:absolute;inset:0}
+.insight-before img,.insight-after img{filter:saturate(.74) contrast(.93)}
+.insight-after{clip-path:inset(0 100% 0 0);z-index:2}
+.insight-divider{position:absolute;left:0;top:0;bottom:0;width:1px;background:#fff;z-index:3;box-shadow:0 0 0 1px rgba(0,0,0,.05);opacity:0}
+.insight-panel{position:relative;padding:12vh 7vw;display:flex;flex-direction:column;justify-content:space-between;background:var(--paper)}
+.insight-panel .eyebrow{color:var(--terracotta)}
+.insight-copy-stack{position:relative;min-height:330px}
+.insight-copy{position:absolute;inset:auto 0 0;opacity:0;transform:translateY(50px)}
+.insight-copy:first-child{opacity:1;transform:none}
+.insight-copy h2{font-size:clamp(42px,5.7vw,84px);line-height:.92;letter-spacing:-.055em;margin-bottom:24px}
+.insight-copy p{color:var(--muted);font-size:15px;line-height:1.65;max-width:440px}
+.insight-number{font-family:Georgia,serif;font-style:italic;font-size:clamp(70px,12vw,180px);line-height:.7;color:rgba(182,99,67,.15);align-self:flex-end}
+
+/* ---------- horizontal work ---------- */
+.work{height:430vh;background:var(--ink);position:relative;color:#fff}
+.work-pin{height:100vh;position:sticky;top:0;overflow:hidden}
+.work-head{position:absolute;top:48px;left:max(24px,calc((100vw - 1240px)/2));right:max(24px,calc((100vw - 1240px)/2));display:flex;justify-content:space-between;align-items:flex-end;z-index:4}
+.work-head h2{font-size:clamp(38px,5vw,74px);letter-spacing:-.05em;font-weight:400}.work-head p{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.6}
+.work-track{position:absolute;left:0;top:0;height:100%;display:flex;gap:20px;padding:160px max(24px,calc((100vw - 1240px)/2)) 54px;will-change:transform}
+.project{width:min(74vw,920px);height:100%;flex:none;position:relative;overflow:hidden;background:#29231f}
+.project img{transition:filter .6s ease;filter:saturate(.75) contrast(.93);transform:scale(1.05)}
+.project:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.62));pointer-events:none}
+.project-meta{position:absolute;left:34px;right:34px;bottom:28px;z-index:3;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end}
+.project-meta h3{font-size:clamp(34px,4vw,68px);font-weight:400;letter-spacing:-.045em}.project-meta span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.76;text-align:right}
+.project-tag{position:absolute;left:24px;top:24px;z-index:3;font-size:10px;letter-spacing:.18em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);padding:10px 12px;border-radius:100px;backdrop-filter:blur(8px)}
+
+/* ---------- services ---------- */
+.services{padding:140px 0 160px;background:var(--paper);position:relative;overflow:hidden}
+.services-head{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-bottom:74px}.services-head .eyebrow{grid-column:1/4;color:var(--terracotta)}.services-head p{grid-column:8/13;color:var(--muted);line-height:1.6;font-size:15px;max-width:470px}
+.service-row{display:grid;grid-template-columns:1.2fr 7fr 3fr;gap:18px;align-items:center;border-top:1px solid var(--line);padding:24px 0;position:relative}
+.service-row:last-child{border-bottom:1px solid var(--line)}
+.service-row .num{font-family:Georgia,serif;font-style:italic;color:var(--terracotta);font-size:17px}
+.service-row h3{font-size:clamp(42px,6.3vw,92px);font-weight:400;letter-spacing:-.055em;line-height:.9;transition:transform .4s ease}
+.service-row p{font-size:13px;line-height:1.55;color:var(--muted)}
+.service-row:hover h3{transform:translateX(18px)}
+.service-preview{position:fixed;width:330px;height:430px;z-index:45;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.86) rotate(-3deg);overflow:hidden;box-shadow:0 24px 80px rgba(35,24,18,.2)}
+.service-preview img{position:absolute;inset:0;opacity:0;transition:opacity .25s}.service-preview img.active{opacity:1}
+
+/* ---------- philosophy ---------- */
+.philosophy{min-height:115vh;background:var(--terracotta);color:#fff;display:grid;place-items:center;position:relative;overflow:hidden;padding:110px 24px}
+.philosophy-rings{position:absolute;inset:0;display:grid;place-items:center;opacity:.26}.ring{position:absolute;border:1px solid rgba(255,255,255,.7);border-radius:50%;width:20vw;height:20vw}.ring:nth-child(2){width:45vw;height:45vw}.ring:nth-child(3){width:72vw;height:72vw}.ring:nth-child(4){width:102vw;height:102vw}
+.philosophy-copy{text-align:center;position:relative;z-index:2;max-width:1050px}.philosophy-copy .eyebrow{margin-bottom:30px}.philosophy-copy h2{font-size:clamp(54px,9vw,142px);font-weight:400;line-height:.84;letter-spacing:-.065em}.philosophy-copy h2 em{font-family:Georgia,serif;font-weight:400}.philosophy-copy p{max-width:460px;margin:34px auto 0;font-size:15px;line-height:1.65;opacity:.84}
+
+/* ---------- process ---------- */
+.process{background:var(--cream);padding:140px 0 160px}
+.process-intro{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-bottom:90px}.process-intro .eyebrow{grid-column:1/4;color:var(--terracotta)}.process-intro h2{grid-column:5/13;font-size:clamp(48px,7vw,102px);font-weight:400;line-height:.9;letter-spacing:-.055em}
+.process-list{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.process-line{grid-column:3/13;display:grid;grid-template-columns:1fr 3.2fr 3fr;gap:18px;padding:30px 0;border-top:1px solid rgba(30,26,23,.16);align-items:start}.process-line:last-child{border-bottom:1px solid rgba(30,26,23,.16)}
+.process-line .num{font-family:Georgia,serif;font-style:italic;color:var(--terracotta)}.process-line h3{font-size:clamp(27px,3.2vw,50px);font-weight:400;letter-spacing:-.035em}.process-line p{font-size:14px;color:var(--muted);line-height:1.65;max-width:390px}
+
+/* ---------- final CTA ---------- */
+.cta{height:115vh;position:relative;overflow:hidden;background:var(--ink);color:#fff;display:grid;place-items:center}
+.cta-bg{position:absolute;inset:-6%;filter:saturate(.65) brightness(.62)}.cta-bg img{transform:scale(1.06)}
+.cta:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,12,.16),rgba(20,15,12,.55))}
+.cta-inner{position:relative;z-index:2;text-align:center;width:min(1100px,calc(100% - 48px))}
+.cta .eyebrow{margin-bottom:28px}.cta h2{font-size:clamp(55px,9.2vw,145px);font-weight:400;line-height:.84;letter-spacing:-.065em;margin-bottom:42px}.cta h2 em{font-family:Georgia,serif;font-weight:400}
+.cta-btn{display:inline-flex;align-items:center;gap:18px;border:1px solid rgba(255,255,255,.66);border-radius:999px;padding:18px 26px 18px 30px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px);transition:background .3s,color .3s}.cta-btn i{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-style:normal;transition:transform .35s}.cta-btn:hover{background:#fff;color:var(--ink)}.cta-btn:hover i{transform:rotate(45deg)}
+
+footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid rgba(255,255,255,.12)}
+.footer-inner{display:flex;justify-content:space-between;gap:20px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.72}
+
+/* ---------- mobile ---------- */
+@media(max-width:900px){
+  .nav-links{display:none}.menu-btn{display:block}
+  /* Mobile: preserve the cinematic choreography without trapping the swipe.
+     A stable large-viewport height prevents Chrome's top/bottom bars from changing
+     sticky geometry or exposing the section background in the middle of a gesture. */
+  .hero{height:calc(var(--scene-h, 100lvh) + 150px);background:var(--ink)}
+  .hero-pin,.transform-pin,.insight-pin{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
+  .hero-pin,.transform-pin,.insight-pin{overscroll-behavior-y:auto;touch-action:pan-y;transform:translateZ(0);backface-visibility:hidden}
+  .transform-pin{background:var(--ink)}
+  .insight{margin-top:-1px}
+  .hero-grid{grid-template-columns:repeat(6,1fr);padding-bottom:40px}.hero-copy{grid-column:1/7}.hero-side{display:none}.hero-media{clip-path:inset(9% 7% round 2px)}
+  .hero-title{font-size:clamp(56px,17vw,106px)}
+
+  /* Short hand-offs: the next section's content starts appearing immediately instead of
+     spending a swipe on empty top/bottom padding. */
+  .manifesto{padding:64px 0 72px}.manifesto-grid{grid-template-columns:repeat(6,1fr)}.manifesto .eyebrow{grid-column:1/7}.manifesto-copy{grid-column:1/7}.manifesto-note{grid-column:2/7;margin-top:38px}
+
+  /* Fixed pixel travel is deliberate on touch: roughly one natural swipe per narrative beat.
+     Habitar is therefore followed almost immediately by the next scene, with no hidden tail. */
+  .transform-section{height:calc(var(--scene-h, 100lvh) + 300px)}
+  .transform-copy{left:24px}.transform-meter{right:18px;height:220px}.transform-step h2{font-size:clamp(52px,18vw,98px)}
+
+  .insight{height:calc(var(--scene-h, 100lvh) + 380px)}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
+
+  /* Mobile/touch: vertical scrolling remains native. The project rail can still be moved sideways,
+     but it cannot pin/consume the vertical page scroll. */
+  .work{height:auto;min-height:100vh}
+  .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
+  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain}
+  .work-track::-webkit-scrollbar{display:none}
+  .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
+  .work-head{top:30px}.work-head p{display:none}
+
+  .services{padding:72px 0}.services-head{grid-template-columns:repeat(6,1fr)}.services-head .eyebrow{grid-column:1/7}.services-head p{grid-column:2/7;margin-top:24px}.service-row{grid-template-columns:.7fr 5fr}.service-row p{grid-column:2/3}.service-preview{display:none}
+  .philosophy{min-height:100vh}.ring{width:38vw;height:38vw}.ring:nth-child(2){width:74vw;height:74vw}.ring:nth-child(3){width:112vw;height:112vw}.ring:nth-child(4){width:160vw;height:160vw}
+  .process{padding:72px 0}.process-intro{grid-template-columns:repeat(6,1fr)}.process-intro .eyebrow{grid-column:1/7}.process-intro h2{grid-column:1/7;margin-top:25px}.process-list{display:block}.process-line{grid-template-columns:.7fr 5fr;gap:12px}.process-line p{grid-column:2/3;margin-top:4px}
+  .cta{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
+  .footer-inner{flex-direction:column}
+}
+@media(max-width:540px){.container,.nav-inner{width:calc(100% - 32px)}.nav{padding:18px 0}.brand span{display:none}.hero-grid{width:calc(100% - 32px)}.hero-kicker{font-size:9px}.scroll-indicator{display:none}.project-meta{left:18px;right:18px;bottom:18px}.project-meta span{display:none}.work-track{padding-left:16px;padding-right:16px}.work-head{left:16px;right:16px}.service-row h3{font-size:40px}.cta-inner{width:calc(100% - 32px)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.cursor,.cursor-dot{display:none!important}.loader{display:none}.hero{height:100vh}.hero-pin,.transform-pin,.insight-pin,.work-pin{position:relative}.transform-section,.insight,.work{height:auto}.hero-media{clip-path:none}.hero-title .line span,.manifesto-copy .word span{transform:none}.transform-layer,.insight-after,.insight-copy,.transform-step{opacity:1!important;transform:none!important;clip-path:none!important}.work-track{position:relative;display:grid;transform:none!important}.project{width:100%;min-height:66vh}.transform-section{display:none}}
+</style>
+</head>
+<body class="locked">
+<div class="noise"></div>
+<div class="cursor"></div><div class="cursor-dot"></div>
+
+<div class="loader" aria-hidden="true">
+  <div class="loader-inner">
+    <svg class="loader-logo loader-mark" viewBox="0 0 100 100" aria-label="TENKA">
+      <circle cx="50" cy="50" r="49" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+      <path d="M49 18V64c0 15 7 21 18 21 5 0 9-1 13-3" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="34" y1="32" x2="73" y2="32" stroke="#fff" stroke-width="7" stroke-linecap="square"/>
+      <polyline points="34,32 49,18 49,32" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round"/>
+    </svg>
+    <div class="loader-word">TENKA — Arquitetura & Interiores</div>
+    <div class="loader-progress"><span></span></div>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand magnetic" href="#inicio" aria-label="TENKA — início">
+      <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="49" fill="#B66343"/>
+        <path d="M49 18V64c0 15 7 21 18 21 5 0 9-1 13-3" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+        <line x1="34" y1="32" x2="73" y2="32" stroke="#fff" stroke-width="7"/>
+        <polygon points="34,32 49,18 49,32" fill="#fff"/>
+      </svg>
+      <span>TENKA</span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a class="nav-link magnetic" href="#projetos">Projetos</a>
+      <a class="nav-link magnetic" href="#servicos">Serviços</a>
+      <a class="nav-link magnetic" href="#processo">Processo</a>
+      <a class="nav-link magnetic" href="#contato">Contato</a>
+    </nav>
+    <button class="menu-btn" aria-label="Abrir menu"><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="hero-pin">
+    <div class="hero-media">
+      <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90" alt="Interior contemporâneo com madeira e iluminação quente" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="hero-kicker">Arquitetura & Interiores — Sorocaba</div>
+        <h1 class="hero-title">
+          <span class="line"><span>Casa com</span></span>
+          <span class="line"><span>cara de <em class="serif">lar.</em></span></span>
+        </h1>
+      </div>
+      <p class="hero-side">Projetos autorais que unem beleza, funcionalidade e a personalidade de quem vai viver cada espaço.</p>
+    </div>
+    <div class="scroll-indicator">Explore <i></i></div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="container manifesto-grid">
+    <div class="eyebrow">Manifesto TENKA</div>
+    <div class="manifesto-copy" aria-label="A arquitetura começa antes da forma. Começa na forma como você quer viver."></div>
+    <p class="manifesto-note">Cada escolha nasce de um motivo: a luz que entra pela manhã, o caminho que você percorre pela casa, o material que envelhece bem e os detalhes que fazem o espaço parecer seu.</p>
+  </div>
+</section>
+
+<section class="transform-section" aria-label="Do espaço ao lar">
+  <div class="transform-pin">
+    <div class="transform-layer l1"><img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2200&q=90" alt="Ambiente residencial contemporâneo" /></div>
+    <div class="transform-layer l2"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=90" alt="Sala com materiais naturais" /></div>
+    <div class="transform-layer l3"><img src="https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=2200&q=90" alt="Interior sofisticado e acolhedor" /></div>
+    <div class="transform-vignette"></div>
+    <div class="transform-copy">
+      <article class="transform-step"><div class="step-index">01 — Escuta</div><h2>Entender.</h2><p>Antes do desenho, existe uma rotina, uma história e uma forma particular de viver.</p></article>
+      <article class="transform-step"><div class="step-index">02 — Intenção</div><h2>Traduzir.</h2><p>Transformamos necessidades em proporção, luz, circulação, matéria e soluções que fazem sentido.</p></article>
+      <article class="transform-step"><div class="step-index">03 — Pertencimento</div><h2>Habitar.</h2><p>O resultado não é um cenário. É um lugar bonito porque funciona — e especial porque parece seu.</p></article>
+    </div>
+    <div class="transform-meter"><span></span></div>
+  </div>
+</section>
+
+<section class="insight" aria-label="O olhar TENKA">
+  <div class="insight-pin">
+    <div class="insight-stage">
+      <div class="insight-before"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1700&q=90" alt="Ambiente antes da intervenção de design" /></div>
+      <div class="insight-after"><img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1700&q=90" alt="Ambiente transformado por arquitetura e interiores" /></div>
+      <div class="insight-divider"></div>
+    </div>
+    <aside class="insight-panel">
+      <div class="eyebrow">O olhar TENKA</div>
+      <div class="insight-copy-stack">
+        <article class="insight-copy"><h2>O problema também pode fazer parte da solução.</h2><p>Um bom projeto não mascara a realidade. Ele lê o espaço, entende as limitações e transforma cada condicionante em uma decisão de projeto.</p></article>
+        <article class="insight-copy"><h2>Resolver sem deixar de emocionar.</h2><p>Funcionalidade e estética não são etapas separadas. Quando o projeto é coerente, uma reforça a outra.</p></article>
+      </div>
+      <div class="insight-number">t.</div>
+    </aside>
+  </div>
+</section>
+
+<section class="work" id="projetos">
+  <div class="work-pin">
+    <div class="work-head"><h2>Projetos que se sentem.</h2><p>Deslize através dos espaços</p></div>
+    <div class="work-track">
+      <article class="project">
+        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — sala" />
+        <span class="project-tag">Interiores</span>
+        <div class="project-meta"><h3>Casa Alma</h3><span>Sorocaba — SP<br>2026</span></div>
+      </article>
+      <article class="project">
+        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — cozinha" />
+        <span class="project-tag">Reforma</span>
+        <div class="project-meta"><h3>Apartamento Luz</h3><span>Campolim — SP<br>2026</span></div>
+      </article>
+      <article class="project">
+        <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — estar" />
+        <span class="project-tag">Arquitetura</span>
+        <div class="project-meta"><h3>Casa Entre</h3><span>Interior — SP<br>2025</span></div>
+      </article>
+      <article class="project">
+        <img src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — dormitório" />
+        <span class="project-tag">Interiores</span>
+        <div class="project-meta"><h3>Refúgio 06</h3><span>Sorocaba — SP<br>2025</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="servicos">
+  <div class="container">
+    <div class="services-head"><div class="eyebrow">O que fazemos</div><p>Da primeira ideia até a execução, a TENKA acompanha as decisões que transformam um imóvel em um espaço coerente, funcional e pessoal.</p></div>
+    <div class="service-row" data-preview="0"><div class="num">01</div><h3>Projetos</h3><p>Arquitetura e interiores pensados de dentro para fora.</p></div>
+    <div class="service-row" data-preview="1"><div class="num">02</div><h3>Reformas</h3><p>Transformação completa com decisões que respeitam o que já existe.</p></div>
+    <div class="service-row" data-preview="2"><div class="num">03</div><h3>Acompanhamento</h3><p>Presença técnica para preservar a intenção do projeto durante a obra.</p></div>
+  </div>
+  <div class="service-preview" aria-hidden="true">
+    <img class="active" src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80" alt="" />
+    <img src="https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=900&q=80" alt="" />
+    <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=900&q=80" alt="" />
+  </div>
+</section>
+
+<section class="philosophy">
+  <div class="philosophy-rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="ring"></span></div>
+  <div class="philosophy-copy">
+    <div class="eyebrow">Nossa medida</div>
+    <h2>Bonito é quando<br><em>faz sentido.</em></h2>
+    <p>Na TENKA, estética não é acabamento. É consequência de decisões bem pensadas sobre quem usa, como usa e por que cada elemento está ali.</p>
+  </div>
+</section>
+
+<section class="process" id="processo">
+  <div class="container">
+    <div class="process-intro"><div class="eyebrow">Do primeiro encontro à entrega</div><h2>Um processo claro para uma transformação tranquila.</h2></div>
+    <div class="process-list">
+      <div class="process-line"><div class="num">01</div><h3>Imersão</h3><p>Entendimento da rotina, necessidades, referências, prioridades e expectativas para o espaço.</p></div>
+      <div class="process-line"><div class="num">02</div><h3>Conceito</h3><p>Organização da ideia central que orienta layout, atmosfera, materiais e linguagem do projeto.</p></div>
+      <div class="process-line"><div class="num">03</div><h3>Projeto</h3><p>Desenvolvimento das soluções, detalhamento e compatibilização das decisões.</p></div>
+      <div class="process-line"><div class="num">04</div><h3>Obra</h3><p>Acompanhamento para aproximar execução e intenção, com olhar atento aos detalhes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="contato">
+  <div class="cta-bg"><img src="https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=2200&q=90" alt="Interior acolhedor em tons naturais" /></div>
+  <div class="cta-inner">
+    <div class="eyebrow">Vamos imaginar juntos?</div>
+    <h2>Seu espaço pode<br>ter mais <em>você.</em></h2>
+    <a class="cta-btn magnetic" href="https://instagram.com/tenkaarquitetura" target="_blank" rel="noopener">Começar uma conversa <i>↗</i></a>
+  </div>
+</section>
+</main>
+
+<footer><div class="container footer-inner"><span>© 2026 TENKA Arquitetura & Interiores</span><span>Sorocaba — SP</span><span>Instagram ↗</span></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, c=document) => c.querySelector(s);
+  const $$ = (s, c=document) => [...c.querySelectorAll(s)];
+
+  // Split manifesto copy without external text-splitting libs.
+  const manifest = $('.manifesto-copy');
+  const words = 'A arquitetura começa antes da forma. Começa na forma como você quer viver.'.split(' ');
+  manifest.innerHTML = words.map(w => `<span class="word"><span>${w}&nbsp;</span></span>`).join('');
+
+  // Custom pointer
+  if (matchMedia('(pointer:fine)').matches) {
+    const cursor = $('.cursor'), dot = $('.cursor-dot');
+    let mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my;
+    addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; gsap.set(dot,{x:mx,y:my}); });
+    gsap.ticker.add(() => { cx += (mx-cx)*.14; cy += (my-cy)*.14; gsap.set(cursor,{x:cx,y:cy}); });
+    $$('a,button,.service-row,.project').forEach(el=>{
+      el.addEventListener('mouseenter',()=>cursor.classList.add('active'));
+      el.addEventListener('mouseleave',()=>cursor.classList.remove('active'));
+    });
+  }
+
+  if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
+    document.body.classList.remove('locked');
+    $('.loader')?.remove();
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Touch uses native vertical scrolling for immediate 1:1 response. Desktop keeps Lenis.
+  const touchMode = matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+  // Keep pinned scenes at a stable LARGE viewport height. Mobile browser chrome may expand/collapse
+  // while swiping; freezing the smaller load-time innerHeight creates a visible strip underneath.
+  const setStableSceneHeight = () => {
+    // Use the LARGE mobile viewport, not the current visible viewport.
+    // `window.innerHeight` is smaller while Chrome's bars are visible; freezing that value
+    // left a beige strip under sticky scenes as soon as the bars collapsed. `100lvh` is
+    // stable across browser-chrome show/hide and always covers the largest usable viewport.
+    if (window.CSS?.supports?.('height', '100lvh')) {
+      document.documentElement.style.setProperty('--scene-h', '100lvh');
+      return;
+    }
+    // Fallback for old browsers: keep the largest height observed for this orientation,
+    // never a smaller transient height caused by browser chrome.
+    const stored = Number(document.documentElement.dataset.sceneHeight || 0);
+    const vv = window.visualViewport?.height || 0;
+    const next = Math.max(stored, window.innerHeight, vv);
+    document.documentElement.dataset.sceneHeight = String(next);
+    document.documentElement.style.setProperty('--scene-h', `${next}px`);
+  };
+  if (touchMode) {
+    setStableSceneHeight();
+    ScrollTrigger.config({ ignoreMobileResize: true });
+    // Only recalculate after a real orientation change, never when Chrome merely hides its bars.
+    addEventListener('orientationchange',()=>setTimeout(()=>{
+      setStableSceneHeight();
+      ScrollTrigger.refresh();
+    },420),{passive:true});
+  }
+  const lenis = (!touchMode && window.Lenis) ? new Lenis({ duration: 1.05, smoothWheel:true, wheelMultiplier:1 }) : null;
+  if (lenis) {
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time*1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  // Intro sequence
+  const intro = gsap.timeline({ defaults:{ease:'power3.out'} });
+  intro
+    .to('.loader-mark path,.loader-mark line,.loader-mark polyline',{strokeDashoffset:0,duration:1.15,stagger:.08})
+    .to('.loader-progress span',{scaleX:1,duration:.75,ease:'power2.inOut'},.15)
+    .to('.loader-word',{letterSpacing:'.38em',opacity:.55,duration:.8},.2)
+    .to('.loader',{yPercent:-100,duration:1.05,ease:'power4.inOut',delay:.15})
+    .set('.loader',{display:'none'})
+    .call(()=>document.body.classList.remove('locked'))
+    .to('.hero-title .line span',{y:0,duration:1.15,stagger:.1,ease:'power4.out'},'-=.45')
+    .from('.hero-kicker,.hero-side',{y:24,opacity:0,duration:.8,stagger:.08},'-=.8');
+
+  // Mobile/touch: the opening frame now plays by itself after load.
+  // It is intentionally NOT tied to ScrollTrigger, so the visitor doesn't have to spend the
+  // first swipe just to expand the hero image. This preserves the exact cinematic motion and
+  // leaves vertical scrolling free to move naturally only after/while the intro is completing.
+  if (touchMode) {
+    intro
+      .to('.hero-media',{clipPath:'inset(0% 0% round 0px)',duration:1.05,ease:'power3.inOut'},'-=.18')
+      .to('.hero-media img',{scale:1.02,yPercent:3.5,duration:1.18,ease:'power2.inOut'},'<')
+      .to('.hero-copy',{yPercent:-7,opacity:1,duration:1.02,ease:'power2.out'},'<')
+      .to('.hero-overlay',{opacity:.38,duration:1.05,ease:'power2.inOut'},'<');
+  }
+
+  // Desktop keeps the original scroll-driven cinematic push-in. On touch/mobile the same
+  // animation is already part of the automatic intro above, so there is no second scroll-linked
+  // animation fighting for the same clip-path/transform values.
+  if (!touchMode) {
+    gsap.timeline({scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom bottom',scrub:1.1}})
+      .to('.hero-media',{clipPath:'inset(0% 0% round 0px)',ease:'none'},0)
+      .to('.hero-media img',{scale:1.02,yPercent:5,ease:'none'},0)
+      .to('.hero-copy',{yPercent:-36,opacity:.16,ease:'none'},.38)
+      .to('.hero-overlay',{opacity:.5,ease:'none'},.3);
+  }
+
+  // Manifesto kinetic typography
+  gsap.to('.manifesto-copy .word span',{
+    y:0,stagger:.035,duration:1,ease:'power4.out',
+    scrollTrigger:{trigger:'.manifesto',start:'top 72%',toggleActions:'play none none reverse'}
+  });
+  gsap.from('.manifesto-note',{x:80,opacity:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.manifesto-note',start:'top 88%'}});
+
+  // Three-stage scrollytelling
+  const tsteps = $$('.transform-step');
+  // Keep the CSS vertical centering as a permanent baseline. Animating `y` on top of a CSS
+  // translateY(-50%) could otherwise be re-parsed differently by mobile browsers and look like
+  // the whole scene jumps when Entender/Traduzir/Habitar changes.
+  gsap.set(tsteps,{yPercent:-50,y:0});
+  const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:touchMode ? true : 1}});
+  if (touchMode) {
+    // Touch choreography is deliberately divided into three gesture-sized beats:
+    // 1) Entender -> Traduzir, 2) Traduzir -> Habitar, 3) only then release to the next section.
+    // Habitar arrives around the middle of the scroll range and gets a real hold zone afterward,
+    // preventing the same swipe that reveals it from also unlocking the following scene.
+    transformTl
+      .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none',duration:.24},0)
+      .to(tsteps[0],{opacity:0,y:-55,duration:.055},.11)
+      .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.11,ease:'none'},.12)
+      .fromTo(tsteps[1],{opacity:0,y:55},{opacity:1,y:0,duration:.065},.18)
+      .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none',duration:.20},.20)
+      .to(tsteps[1],{opacity:0,y:-55,duration:.055},.36)
+      .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.11,ease:'none'},.37)
+      .fromTo(tsteps[2],{opacity:0,y:55},{opacity:1,y:0,duration:.065},.44)
+      // Keep Habitar visually alive while the remaining scroll distance acts as the deliberate
+      // third gesture needed to leave this pinned scene.
+      .to('.transform-layer.l3',{scale:1.08,xPercent:-1,ease:'none',duration:.20},.48)
+      .to('.transform-meter span',{height:'100%',duration:.94,ease:'none'},0);
+  } else {
+    transformTl
+      .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none'},0)
+      .to(tsteps[0],{opacity:0,y:-55,duration:.12},.23)
+      .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.28,ease:'none'},.22)
+      .fromTo(tsteps[1],{opacity:0,y:55},{opacity:1,y:0,duration:.12},.29)
+      .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none'},.28)
+      .to(tsteps[1],{opacity:0,y:-55,duration:.12},.54)
+      .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.3,ease:'none'},.52)
+      .fromTo(tsteps[2],{opacity:0,y:55},{opacity:1,y:0,duration:.14},.61)
+      .to('.transform-layer.l3',{scale:1.08,yPercent:-2,ease:'none'},.6)
+      .to('.transform-meter span',{height:'100%',ease:'none'},0);
+  }
+
+  // Before/after stage
+  const icopy = $$('.insight-copy');
+  const insightTl = gsap.timeline({scrollTrigger:{trigger:'.insight',start:'top top',end:'bottom bottom',scrub:touchMode ? true : 1}});
+  if (touchMode) {
+    insightTl
+      .to('.insight-before img',{scale:1.1,xPercent:-3,ease:'none',duration:.52},0)
+      .to('.insight-after',{clipPath:'inset(0 0% 0 0)',duration:.34,ease:'none'},.34)
+      .to('.insight-divider',{left:'100%',opacity:1,duration:.34,ease:'none'},.34)
+      .to(icopy[0],{opacity:0,y:-50,duration:.08},.64)
+      .fromTo(icopy[1],{opacity:0,y:50},{opacity:1,y:0,duration:.09},.73)
+      .to('.insight-after img',{scale:1.08,xPercent:2,ease:'none',duration:.20},.76);
+  } else {
+    insightTl
+      .to('.insight-before img',{scale:1.1,xPercent:-3,ease:'none'},0)
+      .to('.insight-after',{clipPath:'inset(0 0% 0 0)',duration:.45,ease:'none'},.28)
+      .to('.insight-divider',{left:'100%',opacity:1,duration:.45,ease:'none'},.28)
+      .to(icopy[0],{opacity:0,y:-50,duration:.12},.48)
+      .fromTo(icopy[1],{opacity:0,y:50},{opacity:1,y:0,duration:.16},.56)
+      .to('.insight-after img',{scale:1.08,xPercent:2,ease:'none'},.54);
+  }
+
+  // Project gallery. On desktop it keeps the cinematic vertical-to-horizontal sequence.
+  // On touch/mobile, vertical scrolling remains 100% vertical; the same gallery can be swiped sideways natively.
+  const track = $('.work-track');
+  const touchLayout = touchMode;
+  if (track && !touchLayout) {
+    const getTravel = () => Math.max(0, track.scrollWidth - innerWidth);
+    gsap.to(track,{x:()=>-getTravel(),ease:'none',scrollTrigger:{trigger:'.work',start:'top top',end:'bottom bottom',scrub:1.05,invalidateOnRefresh:true}});
+    $$('.project img').forEach(img => {
+      gsap.to(img,{xPercent:-4,scale:1.12,ease:'none',scrollTrigger:{trigger:img.closest('.project'),containerAnimation:null,start:'left right',end:'right left',scrub:1}});
+    });
+  }
+
+  // Service floating editorial preview
+  const preview = $('.service-preview'), previewImgs = $$('.service-preview img');
+  if (preview && matchMedia('(pointer:fine)').matches) {
+    let px=innerWidth*.72, py=innerHeight*.52;
+    addEventListener('mousemove', e=>{px=e.clientX;py=e.clientY;gsap.to(preview,{x:px,y:py,duration:.55,ease:'power3.out'})});
+    $$('.service-row').forEach(row=>{
+      row.addEventListener('mouseenter',()=>{
+        const index=+row.dataset.preview;
+        previewImgs.forEach((im,i)=>im.classList.toggle('active',i===index));
+        gsap.to(preview,{opacity:1,scale:1,rotation:2,duration:.45,ease:'power3.out'});
+      });
+      row.addEventListener('mouseleave',()=>gsap.to(preview,{opacity:0,scale:.86,rotation:-3,duration:.35}));
+    });
+  }
+
+  // Philosophy camera/rings drift
+  gsap.timeline({scrollTrigger:{trigger:'.philosophy',start:'top bottom',end:'bottom top',scrub:touchMode ? true : 1}})
+    .to('.ring:nth-child(1)',{scale:1.35,rotation:22,ease:'none'},0)
+    .to('.ring:nth-child(2)',{scale:.84,rotation:-20,ease:'none'},0)
+    .to('.ring:nth-child(3)',{scale:1.12,rotation:15,ease:'none'},0)
+    .to('.philosophy-copy',{yPercent:-10,ease:'none'},0);
+
+  // Process — stagger from side with clip rather than fade-only
+  $$('.process-line').forEach((line,i)=>{
+    gsap.from(line,{x:i%2?60:-60,clipPath:'inset(0 0 0 100%)',duration:1.1,ease:'power4.out',scrollTrigger:{trigger:line,start:'top 88%'}});
+  });
+
+  // Final camera movement
+  gsap.to('.cta-bg img',{scale:1.18,yPercent:6,ease:'none',scrollTrigger:{trigger:'.cta',start:'top bottom',end:'bottom top',scrub:touchMode ? true : 1.1}});
+  gsap.from('.cta-inner',{scale:.82,y:70,filter:'blur(12px)',duration:1.25,ease:'power4.out',scrollTrigger:{trigger:'.cta',start:'top 68%'}});
+
+  // Magnetic interactions
+  $$('.magnetic').forEach(el=>{
+    el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();const x=e.clientX-(r.left+r.width/2);const y=e.clientY-(r.top+r.height/2);gsap.to(el,{x:x*.16,y:y*.16,duration:.25})});
+    el.addEventListener('mouseleave',()=>gsap.to(el,{x:0,y:0,duration:.55,ease:'elastic.out(1,.35)'}));
+  });
+
+  // Anchor links through Lenis.
+  $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.getAttribute('href'));if(target&&lenis){e.preventDefault();lenis.scrollTo(target,{offset:0,duration:1.25});}}));
+
+  ScrollTrigger.refresh();
+})();
+</script>
+</body>
+</html>
