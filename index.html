@@ -174,6 +174,11 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
 /* ---------- mobile ---------- */
 @media(max-width:900px){
+  :root{
+    /* Real gesture-sized travel: one intentional swipe per narrative beat. */
+    --transform-travel:clamp(1260px,204svh,1860px);
+    --insight-travel:clamp(640px,95svh,860px);
+  }
   .nav-links{display:none}.menu-btn{display:block}
   /* Mobile: preserve the cinematic choreography without trapping the swipe.
      A stable large-viewport height prevents Chrome's top/bottom bars from changing
@@ -190,18 +195,18 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
      spending a swipe on empty top/bottom padding. */
   .manifesto{padding:64px 0 72px}.manifesto-grid{grid-template-columns:repeat(6,1fr)}.manifesto .eyebrow{grid-column:1/7}.manifesto-copy{grid-column:1/7}.manifesto-note{grid-column:2/7;margin-top:38px}
 
-  /* Fixed pixel travel is deliberate on touch: roughly one natural swipe per narrative beat.
-     Habitar is therefore followed almost immediately by the next scene, with no hidden tail. */
-  .transform-section{height:calc(var(--scene-h, 100lvh) + 300px)}
+  /* Gesture-sized travel: Entender, Traduzir and Habitar each receive a deliberate beat.
+     The final portion holds Habitar before the sticky scene can hand off to the next section. */
+  .transform-section{height:calc(var(--scene-h, 100lvh) + var(--transform-travel));background:var(--ink)}
   .transform-copy{left:24px}.transform-meter{right:18px;height:220px}.transform-step h2{font-size:clamp(52px,18vw,98px)}
 
-  .insight{height:calc(var(--scene-h, 100lvh) + 380px)}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
+  .insight{height:calc(var(--scene-h, 100lvh) + var(--insight-travel))}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
 
   /* Mobile/touch: vertical scrolling remains native. The project rail can still be moved sideways,
      but it cannot pin/consume the vertical page scroll. */
   .work{height:auto;min-height:100vh}
   .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
-  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain}
+  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:pan-x pan-y}
   .work-track::-webkit-scrollbar{display:none}
   .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
   .work-head{top:30px}.work-head p{display:none}
@@ -211,6 +216,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .process{padding:72px 0}.process-intro{grid-template-columns:repeat(6,1fr)}.process-intro .eyebrow{grid-column:1/7}.process-intro h2{grid-column:1/7;margin-top:25px}.process-list{display:block}.process-line{grid-template-columns:.7fr 5fr;gap:12px}.process-line p{grid-column:2/3;margin-top:4px}
   .cta{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
   .footer-inner{flex-direction:column}
+  .noise{mix-blend-mode:normal;opacity:.025}
 }
 @media(max-width:540px){.container,.nav-inner{width:calc(100% - 32px)}.nav{padding:18px 0}.brand span{display:none}.hero-grid{width:calc(100% - 32px)}.hero-kicker{font-size:9px}.scroll-indicator{display:none}.project-meta{left:18px;right:18px;bottom:18px}.project-meta span{display:none}.work-track{padding-left:16px;padding-right:16px}.work-head{left:16px;right:16px}.service-row h3{font-size:40px}.cta-inner{width:calc(100% - 32px)}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.cursor,.cursor-dot{display:none!important}.loader{display:none}.hero{height:100vh}.hero-pin,.transform-pin,.insight-pin,.work-pin{position:relative}.transform-section,.insight,.work{height:auto}.hero-media{clip-path:none}.hero-title .line span,.manifesto-copy .word span{transform:none}.transform-layer,.insight-after,.insight-copy,.transform-step{opacity:1!important;transform:none!important;clip-path:none!important}.work-track{position:relative;display:grid;transform:none!important}.project{width:100%;min-height:66vh}.transform-section{display:none}}
@@ -406,7 +412,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   manifest.innerHTML = words.map(w => `<span class="word"><span>${w}&nbsp;</span></span>`).join('');
 
   // Custom pointer
-  if (matchMedia('(pointer:fine)').matches) {
+  if (window.gsap && matchMedia('(pointer:fine)').matches) {
     const cursor = $('.cursor'), dot = $('.cursor-dot');
     let mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my;
     addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; gsap.set(dot,{x:mx,y:my}); });
@@ -425,8 +431,12 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Touch uses native vertical scrolling for immediate 1:1 response. Desktop keeps Lenis.
-  const touchMode = matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+  // Keep input type and responsive layout separate. A coarse pointer can exist on a
+  // desktop-width touchscreen; using that as the mobile layout switch breaks the pinned
+  // gallery and scene geometry because the CSS breakpoint is width-based.
+  const mobileQuery = matchMedia('(max-width: 900px)');
+  const mobileLayout = mobileQuery.matches;
+  const nativeScroll = mobileLayout || matchMedia('(pointer: coarse)').matches;
   // Keep pinned scenes at a stable LARGE viewport height. Mobile browser chrome may expand/collapse
   // while swiping; freezing the smaller load-time innerHeight creates a visible strip underneath.
   const setStableSceneHeight = () => {
@@ -446,16 +456,22 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     document.documentElement.dataset.sceneHeight = String(next);
     document.documentElement.style.setProperty('--scene-h', `${next}px`);
   };
-  if (touchMode) {
+  if (mobileLayout) {
     setStableSceneHeight();
     ScrollTrigger.config({ ignoreMobileResize: true });
     // Only recalculate after a real orientation change, never when Chrome merely hides its bars.
     addEventListener('orientationchange',()=>setTimeout(()=>{
+      // A tablet can cross the CSS breakpoint when rotated. Reloading only in that case prevents
+      // mobile timelines from running against the desktop layout (or vice versa).
+      if (mobileQuery.matches !== mobileLayout) {
+        location.reload();
+        return;
+      }
       setStableSceneHeight();
       ScrollTrigger.refresh();
     },420),{passive:true});
   }
-  const lenis = (!touchMode && window.Lenis) ? new Lenis({ duration: 1.05, smoothWheel:true, wheelMultiplier:1 }) : null;
+  const lenis = (!nativeScroll && window.Lenis) ? new Lenis({ duration: 1.05, smoothWheel:true, wheelMultiplier:1 }) : null;
   if (lenis) {
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(time => lenis.raf(time*1000));
@@ -470,7 +486,10 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     .to('.loader-word',{letterSpacing:'.38em',opacity:.55,duration:.8},.2)
     .to('.loader',{yPercent:-100,duration:1.05,ease:'power4.inOut',delay:.15})
     .set('.loader',{display:'none'})
-    .call(()=>document.body.classList.remove('locked'))
+    .call(()=>{
+      document.body.classList.remove('locked');
+      requestAnimationFrame(()=>ScrollTrigger.refresh());
+    })
     .to('.hero-title .line span',{y:0,duration:1.15,stagger:.1,ease:'power4.out'},'-=.45')
     .from('.hero-kicker,.hero-side',{y:24,opacity:0,duration:.8,stagger:.08},'-=.8');
 
@@ -478,7 +497,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // It is intentionally NOT tied to ScrollTrigger, so the visitor doesn't have to spend the
   // first swipe just to expand the hero image. This preserves the exact cinematic motion and
   // leaves vertical scrolling free to move naturally only after/while the intro is completing.
-  if (touchMode) {
+  if (mobileLayout) {
     intro
       .to('.hero-media',{clipPath:'inset(0% 0% round 0px)',duration:1.05,ease:'power3.inOut'},'-=.18')
       .to('.hero-media img',{scale:1.02,yPercent:3.5,duration:1.18,ease:'power2.inOut'},'<')
@@ -489,7 +508,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // Desktop keeps the original scroll-driven cinematic push-in. On touch/mobile the same
   // animation is already part of the automatic intro above, so there is no second scroll-linked
   // animation fighting for the same clip-path/transform values.
-  if (!touchMode) {
+  if (!mobileLayout) {
     gsap.timeline({scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom bottom',scrub:1.1}})
       .to('.hero-media',{clipPath:'inset(0% 0% round 0px)',ease:'none'},0)
       .to('.hero-media img',{scale:1.02,yPercent:5,ease:'none'},0)
@@ -510,8 +529,8 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // translateY(-50%) could otherwise be re-parsed differently by mobile browsers and look like
   // the whole scene jumps when Entender/Traduzir/Habitar changes.
   gsap.set(tsteps,{yPercent:-50,y:0});
-  const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:touchMode ? true : 1}});
-  if (touchMode) {
+  const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1}});
+  if (mobileLayout) {
     // Touch choreography is deliberately divided into three gesture-sized beats:
     // 1) Entender -> Traduzir, 2) Traduzir -> Habitar, 3) only then release to the next section.
     // Habitar arrives around the middle of the scroll range and gets a real hold zone afterward,
@@ -545,8 +564,8 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
   // Before/after stage
   const icopy = $$('.insight-copy');
-  const insightTl = gsap.timeline({scrollTrigger:{trigger:'.insight',start:'top top',end:'bottom bottom',scrub:touchMode ? true : 1}});
-  if (touchMode) {
+  const insightTl = gsap.timeline({scrollTrigger:{trigger:'.insight',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1}});
+  if (mobileLayout) {
     insightTl
       .to('.insight-before img',{scale:1.1,xPercent:-3,ease:'none',duration:.52},0)
       .to('.insight-after',{clipPath:'inset(0 0% 0 0)',duration:.34,ease:'none'},.34)
@@ -567,12 +586,12 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // Project gallery. On desktop it keeps the cinematic vertical-to-horizontal sequence.
   // On touch/mobile, vertical scrolling remains 100% vertical; the same gallery can be swiped sideways natively.
   const track = $('.work-track');
-  const touchLayout = touchMode;
+  const touchLayout = mobileLayout;
   if (track && !touchLayout) {
     const getTravel = () => Math.max(0, track.scrollWidth - innerWidth);
-    gsap.to(track,{x:()=>-getTravel(),ease:'none',scrollTrigger:{trigger:'.work',start:'top top',end:'bottom bottom',scrub:1.05,invalidateOnRefresh:true}});
+    const workTween = gsap.to(track,{x:()=>-getTravel(),ease:'none',scrollTrigger:{trigger:'.work',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1.05,invalidateOnRefresh:true}});
     $$('.project img').forEach(img => {
-      gsap.to(img,{xPercent:-4,scale:1.12,ease:'none',scrollTrigger:{trigger:img.closest('.project'),containerAnimation:null,start:'left right',end:'right left',scrub:1}});
+      gsap.to(img,{xPercent:-4,scale:1.12,ease:'none',scrollTrigger:{trigger:img.closest('.project'),containerAnimation:workTween,start:'left right',end:'right left',scrub:true,invalidateOnRefresh:true}});
     });
   }
 
@@ -592,7 +611,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   }
 
   // Philosophy camera/rings drift
-  gsap.timeline({scrollTrigger:{trigger:'.philosophy',start:'top bottom',end:'bottom top',scrub:touchMode ? true : 1}})
+  gsap.timeline({scrollTrigger:{trigger:'.philosophy',start:'top bottom',end:'bottom top',scrub:nativeScroll ? true : 1}})
     .to('.ring:nth-child(1)',{scale:1.35,rotation:22,ease:'none'},0)
     .to('.ring:nth-child(2)',{scale:.84,rotation:-20,ease:'none'},0)
     .to('.ring:nth-child(3)',{scale:1.12,rotation:15,ease:'none'},0)
@@ -604,8 +623,11 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   });
 
   // Final camera movement
-  gsap.to('.cta-bg img',{scale:1.18,yPercent:6,ease:'none',scrollTrigger:{trigger:'.cta',start:'top bottom',end:'bottom top',scrub:touchMode ? true : 1.1}});
-  gsap.from('.cta-inner',{scale:.82,y:70,filter:'blur(12px)',duration:1.25,ease:'power4.out',scrollTrigger:{trigger:'.cta',start:'top 68%'}});
+  gsap.to('.cta-bg img',{scale:1.18,yPercent:6,ease:'none',scrollTrigger:{trigger:'.cta',start:'top bottom',end:'bottom top',scrub:nativeScroll ? true : 1.1}});
+  gsap.from('.cta-inner',mobileLayout
+    ? {scale:.9,y:50,opacity:0,duration:1.05,ease:'power3.out',scrollTrigger:{trigger:'.cta',start:'top 72%'}}
+    : {scale:.82,y:70,filter:'blur(12px)',duration:1.25,ease:'power4.out',scrollTrigger:{trigger:'.cta',start:'top 68%'}}
+  );
 
   // Magnetic interactions
   $$('.magnetic').forEach(el=>{
@@ -617,6 +639,9 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.getAttribute('href'));if(target&&lenis){e.preventDefault();lenis.scrollTo(target,{offset:0,duration:1.25});}}));
 
   ScrollTrigger.refresh();
+  // Refresh once more after all remote images are decoded. This prevents late-loading media
+  // from shifting start/end positions and making a scene jump on the first interaction.
+  addEventListener('load',()=>ScrollTrigger.refresh(),{once:true});
 })();
 </script>
 </body>
