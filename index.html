@@ -186,10 +186,11 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .hero{height:calc(var(--scene-h, 100lvh) + 150px);background:var(--ink)}
   .hero-pin,.transform-pin,.insight-pin{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
   .hero-pin,.transform-pin,.insight-pin{overscroll-behavior-y:auto;touch-action:pan-y;transform:translateZ(0);backface-visibility:hidden}
-  /* The section travel stays stable, but the visible frame must follow the real viewport.
-     A tiny vertical bleed also removes sub-pixel seams on mobile browsers. */
-  .transform-pin{height:100dvh;min-height:100dvh;background:var(--ink)}
-  .transform-layer,.transform-vignette{inset:-2px 0}
+  /* Only the opening hero follows the live viewport. Its image keeps a tiny vertical bleed so
+     the automatic expansion finishes flush with the bottom edge when browser chrome moves. */
+  .hero-pin{height:100dvh;min-height:100dvh}
+  .hero-media{inset:-2px 0}
+  .transform-pin{background:var(--ink)}
   .insight{margin-top:-1px}
   .hero-grid{grid-template-columns:repeat(6,1fr);padding-bottom:40px}.hero-copy{grid-column:1/7}.hero-side{display:none}.hero-media{clip-path:inset(9% 7% round 2px)}
   .hero-title{font-size:clamp(56px,17vw,106px)}
