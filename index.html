@@ -98,9 +98,9 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .transform-layer.l2{clip-path:inset(0 0 100% 0)}
 .transform-layer.l3{clip-path:circle(0% at 72% 55%)}
 .transform-vignette{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,15,12,.48) 0%,rgba(20,15,12,.10) 50%,rgba(20,15,12,.28) 100%);z-index:5}
-.transform-copy{position:absolute;z-index:7;left:max(24px,calc((100vw - 1240px)/2));top:50%;transform:translateY(-50%);color:#fff;width:min(620px,75vw)}
-.transform-step{position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:0}
-.transform-step:first-child{opacity:1}
+.transform-copy{position:absolute;z-index:7;left:max(24px,calc((100vw - 1240px)/2));top:0;bottom:0;color:#fff;width:min(620px,75vw);display:grid;align-items:center;pointer-events:none}
+.transform-step{position:relative;grid-area:1/1;opacity:0;visibility:hidden}
+.transform-step:first-child{opacity:1;visibility:visible}
 .step-index{font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:18px;opacity:.74}
 .transform-step h2{font-size:clamp(58px,8vw,122px);letter-spacing:-.06em;line-height:.85;margin-bottom:22px}
 .transform-step p{max-width:400px;font-size:16px;line-height:1.6}
@@ -530,35 +530,35 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
   // Three-stage scrollytelling
   const tsteps = $$('.transform-step');
-  // Keep the CSS vertical centering as a permanent baseline. Animating `y` on top of a CSS
-  // translateY(-50%) could otherwise be re-parsed differently by mobile browsers and look like
-  // the whole scene jumps when Entender/Traduzir/Habitar changes.
-  gsap.set(tsteps,{yPercent:-50,y:0});
+  // Each text occupies the same real grid cell. This avoids the old zero-height absolute
+  // container and keeps mobile browsers from shifting the copy while the viewport bars move.
+  gsap.set(tsteps,{y:0,autoAlpha:0});
+  gsap.set(tsteps[0],{autoAlpha:1});
   const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1}});
   if (mobileLayout) {
     // Three clear mobile beats without the sensation that the page is holding the user back:
     // Entender -> Traduzir, Traduzir -> Habitar, then a short Habitar hold before release.
     transformTl
       .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none',duration:.28},0)
-      .to(tsteps[0],{opacity:0,y:-55,duration:.06},.20)
+      .to(tsteps[0],{autoAlpha:0,y:-42,duration:.06},.20)
       .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.12,ease:'none'},.22)
-      .fromTo(tsteps[1],{opacity:0,y:55},{opacity:1,y:0,duration:.07},.28)
+      .fromTo(tsteps[1],{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.07},.28)
       .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none',duration:.18},.30)
-      .to(tsteps[1],{opacity:0,y:-55,duration:.06},.50)
+      .to(tsteps[1],{autoAlpha:0,y:-42,duration:.06},.50)
       .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.12,ease:'none'},.52)
-      .fromTo(tsteps[2],{opacity:0,y:55},{opacity:1,y:0,duration:.07},.60)
+      .fromTo(tsteps[2],{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.07},.60)
       .to('.transform-layer.l3',{scale:1.08,xPercent:-1,ease:'none',duration:.18},.66)
       .to('.transform-meter span',{height:'100%',duration:1,ease:'none'},0);
   } else {
     transformTl
       .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none'},0)
-      .to(tsteps[0],{opacity:0,y:-55,duration:.12},.23)
+      .to(tsteps[0],{autoAlpha:0,y:-55,duration:.12},.23)
       .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.28,ease:'none'},.22)
-      .fromTo(tsteps[1],{opacity:0,y:55},{opacity:1,y:0,duration:.12},.29)
+      .fromTo(tsteps[1],{autoAlpha:0,y:55},{autoAlpha:1,y:0,duration:.12},.29)
       .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none'},.28)
-      .to(tsteps[1],{opacity:0,y:-55,duration:.12},.54)
+      .to(tsteps[1],{autoAlpha:0,y:-55,duration:.12},.54)
       .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.3,ease:'none'},.52)
-      .fromTo(tsteps[2],{opacity:0,y:55},{opacity:1,y:0,duration:.14},.61)
+      .fromTo(tsteps[2],{autoAlpha:0,y:55},{autoAlpha:1,y:0,duration:.14},.61)
       .to('.transform-layer.l3',{scale:1.08,yPercent:-2,ease:'none'},.6)
       .to('.transform-meter span',{height:'100%',ease:'none'},0);
   }
