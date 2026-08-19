@@ -186,11 +186,9 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .hero{height:calc(var(--scene-h, 100lvh) + 150px);background:var(--ink)}
   .hero-pin,.transform-pin,.insight-pin{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
   .hero-pin,.transform-pin,.insight-pin{overscroll-behavior-y:auto;touch-action:pan-y;transform:translateZ(0);backface-visibility:hidden}
-  /* Only the opening hero follows the live viewport. Its image keeps a tiny vertical bleed so
-     the automatic expansion finishes flush with the bottom edge when browser chrome moves. */
-  .hero-pin{height:100dvh;min-height:100dvh}
-  .hero-media{inset:-2px 0}
   .transform-pin{background:var(--ink)}
+  /* Only Habitar needs extra coverage: its circular reveal must reach every portrait corner. */
+  .transform-layer.l3{inset:-2px 0}
   .insight{margin-top:-1px}
   .hero-grid{grid-template-columns:repeat(6,1fr);padding-bottom:40px}.hero-copy{grid-column:1/7}.hero-side{display:none}.hero-media{clip-path:inset(9% 7% round 2px)}
   .hero-title{font-size:clamp(56px,17vw,106px)}
@@ -549,7 +547,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       .fromTo(tsteps[1],{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.07},.28)
       .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none',duration:.18},.30)
       .to(tsteps[1],{autoAlpha:0,y:-42,duration:.06},.50)
-      .to('.transform-layer.l3',{clipPath:'circle(78% at 72% 55%)',duration:.12,ease:'none'},.52)
+      .to('.transform-layer.l3',{clipPath:'circle(150% at 72% 55%)',duration:.12,ease:'none'},.52)
       .fromTo(tsteps[2],{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.07},.60)
       .to('.transform-layer.l3',{scale:1.08,xPercent:-1,ease:'none',duration:.18},.66)
       .to('.transform-meter span',{height:'100%',duration:1,ease:'none'},0);
