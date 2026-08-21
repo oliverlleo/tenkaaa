@@ -63,6 +63,7 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .noise{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.05;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E")}
 @media(pointer:fine){a,button{cursor:pointer}}
 body.is-page-dragging{cursor:grabbing;user-select:none}
+img{-webkit-user-drag:none;user-select:none}
 .work-track{cursor:grab;user-select:none}.work-track.is-dragging{cursor:grabbing}
 
 .container{width:min(1240px,calc(100% - 48px));margin-inline:auto}
@@ -214,46 +215,36 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 /* ---------- mobile ---------- */
 @media(max-width:900px){
   :root{
-    /* Use the larger usable height so browser/system bars never expose the scene background. */
+    /* Cover the largest usable viewport so mobile browser bars never expose scene backgrounds. */
     --scene-visible:max(var(--scene-h, 100lvh), 100dvh);
+    /* Enough room for the three narrative beats without making the page feel trapped. */
     --transform-travel:clamp(520px,80svh,760px);
     --insight-travel:clamp(300px,45svh,430px);
   }
   .nav-links{position:fixed;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:22px;padding:96px 24px 48px;background:var(--ink);color:#fff;font-size:clamp(34px,9vw,62px);letter-spacing:-.04em;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-14px);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}.nav.is-open .nav-links{opacity:1;visibility:visible;pointer-events:auto;transform:none}.nav-links .nav-link{padding:0}.menu-btn{display:block}
-  /* Mobile uses native document flow. The cinematic pinning remains desktop-only so a
-     finger swipe never gets converted into an animation scrub or a long held scene. */
-  .hero{height:100svh;min-height:100svh;background:var(--ink)}
-  .hero-pin{height:100%;min-height:100%;position:relative;top:auto}
-  .transform-pin,.insight-pin{height:auto;min-height:0;position:relative;top:auto;display:block;overflow:visible}
-  .hero-pin{overscroll-behavior-y:auto;touch-action:pan-y;transform:translateZ(0);backface-visibility:hidden}
+  /* Mobile: preserve the cinematic choreography without trapping the swipe.
+     A stable large-viewport height prevents Chrome's top/bottom bars from changing
+     sticky geometry or exposing the section background in the middle of a gesture. */
+  .hero{height:calc(var(--scene-visible) + 150px);background:var(--ink)}
+  .hero-pin,.transform-pin,.insight-pin{height:var(--scene-visible);min-height:var(--scene-visible)}
+  .hero-pin,.transform-pin,.insight-pin{overscroll-behavior-y:auto;touch-action:pan-y;transform:translateZ(0);backface-visibility:hidden}
   .transform-pin{background:var(--ink)}
-  .transform-layer{position:relative;inset:auto;height:58svh;min-height:420px;clip-path:none!important;transform:none!important;opacity:1!important}
-  .transform-layer.l3{inset:auto}
-  .transform-vignette{display:none}
-  .transform-copy{position:relative;left:auto;top:auto;bottom:auto;width:auto;display:flex;flex-direction:column;gap:30px;padding:34px 24px 72px;color:#fff;pointer-events:auto}
-  .transform-step,.transform-step:first-child{position:relative;inset:auto;grid-area:auto;opacity:1!important;visibility:visible!important;transform:none!important}
-  .transform-meter{display:none}
-  .insight{height:auto;margin-top:0}
-  .insight-stage{height:62svh;min-height:420px}
-  .insight-before,.insight-after{clip-path:none!important}
-  .insight-divider{display:none}
-  .insight-copy-stack{min-height:0}
-  .insight-copy,.insight-copy:first-child{position:relative;inset:auto;opacity:1!important;transform:none!important;margin-bottom:34px}
+  /* Only Habitar needs extra coverage: its circular reveal must reach every portrait corner. */
+  .transform-layer.l3{inset:-2px 0}
+  .insight{margin-top:-1px}
   .hero-grid{grid-template-columns:repeat(6,1fr);padding-bottom:40px}.hero-copy{grid-column:1/7}.hero-side{display:none}.hero-media{clip-path:inset(9% 7% round 2px)}
   .hero-title{font-size:clamp(56px,17vw,106px)}
 
   /* Short hand-offs: the next section's content starts appearing immediately instead of
      spending a swipe on empty top/bottom padding. */
-  .manifesto{padding:64px 0 72px}.manifesto-grid{grid-template-columns:repeat(6,1fr)}.manifesto .eyebrow{grid-column:1/7}.manifesto-copy{grid-column:1/7}.manifesto-copy .word span{transform:none}.manifesto-note{grid-column:2/7;margin-top:38px}
-  html.mobile-motion .mobile-reveal{opacity:0!important;transform:translateY(26px)!important;transition:opacity .72s ease,transform .82s cubic-bezier(.2,.7,.2,1);transition-delay:var(--mobile-delay,0ms)}
-  html.mobile-motion .mobile-reveal.is-visible{opacity:1!important;transform:none!important}
-  html.mobile-motion .transform-layer.mobile-reveal{transform:scale(.96)!important}
-  html.mobile-motion .transform-layer.mobile-reveal.is-visible{transform:scale(1)!important}
+  .manifesto{padding:64px 0 72px}.manifesto-grid{grid-template-columns:repeat(6,1fr)}.manifesto .eyebrow{grid-column:1/7}.manifesto-copy{grid-column:1/7}.manifesto-note{grid-column:2/7;margin-top:38px}
 
-  .transform-section{height:auto;background:var(--ink)}
-  .transform-copy{left:auto}.transform-step h2{font-size:clamp(52px,18vw,98px)}
+  /* Gesture-sized travel: Entender, Traduzir and Habitar each receive a deliberate beat.
+     The final portion holds Habitar before the sticky scene can hand off to the next section. */
+  .transform-section{height:calc(var(--scene-visible) + var(--transform-travel));background:var(--ink)}
+  .transform-copy{left:24px}.transform-meter{right:18px;height:220px}.transform-step h2{font-size:clamp(52px,18vw,98px)}
 
-  .insight-pin{display:block}.insight-panel{padding:34px 24px 28px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
+  .insight{height:calc(var(--scene-visible) + var(--insight-travel))}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
 
   /* Mobile/touch: vertical scrolling remains native. The project rail can still be moved sideways,
      but it cannot pin/consume the vertical page scroll. */
@@ -500,7 +491,14 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     img.classList.add('is-broken');
     img.alt = img.alt || 'Imagem indisponível';
   }, { once:true });
-  $$('img').forEach(markImageFailure);
+  $$('img').forEach(img => {
+    img.draggable = false;
+    img.setAttribute('draggable','false');
+    markImageFailure(img);
+  });
+  document.addEventListener('dragstart', event => {
+    if (event.target instanceof HTMLImageElement) event.preventDefault();
+  });
 
   // Split manifesto copy without external text-splitting libs.
   const manifest = $('.manifesto-copy');
@@ -523,8 +521,6 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // gallery and scene geometry because the CSS breakpoint is width-based.
   const mobileQuery = matchMedia('(max-width: 900px)');
   const mobileLayout = mobileQuery.matches;
-  const mobileMotion = mobileLayout && !reduceMotion;
-  if (mobileMotion) root.classList.add('mobile-motion');
   const nativeScroll = mobileLayout || matchMedia('(pointer: coarse)').matches;
   // Keep pinned scenes at a stable LARGE viewport height. Mobile browser chrome may expand/collapse
   // while swiping; freezing the smaller load-time innerHeight creates a visible strip underneath.
@@ -610,26 +606,32 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       .to('.hero-overlay',{opacity:.5,ease:'none'},.3);
   }
 
-  // Mobile content enters as normal document flow. Desktop keeps the kinetic typography.
-  if (mobileLayout) {
-    gsap.set('.manifesto-copy .word span',{clearProps:'all'});
-  } else {
-    gsap.to('.manifesto-copy .word span',{
-      y:0,stagger:.035,duration:1,ease:'power4.out',
-      scrollTrigger:{trigger:'.manifesto',start:'top 72%',toggleActions:'play none none reverse'}
-    });
-    gsap.from('.manifesto-note',{x:80,opacity:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.manifesto-note',start:'top 88%'}});
-  }
+  // Manifesto kinetic typography — shared by desktop and mobile, with a light trigger on touch.
+  gsap.to('.manifesto-copy .word span',{
+    y:0,stagger:.035,duration:1,ease:'power4.out',
+    scrollTrigger:{trigger:'.manifesto',start:'top 72%',toggleActions:'play none none reverse'}
+  });
+  gsap.from('.manifesto-note',{x:80,opacity:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.manifesto-note',start:'top 88%'}});
 
-  // Three-stage scrollytelling: desktop only. Mobile uses all layers and steps in normal flow.
+  // Three-stage scrollytelling. Desktop and mobile keep the same visual choreography,
+  // while mobile uses native scrolling with a shorter, gesture-sized scene.
   const tsteps = $$('.transform-step');
+  gsap.set(tsteps,{y:0,autoAlpha:0});
+  gsap.set(tsteps[0],{autoAlpha:1});
+  const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:nativeScroll ? .55 : 1}});
   if (mobileLayout) {
-    gsap.set(tsteps,{clearProps:'all',autoAlpha:1,y:0});
-    gsap.set('.transform-layer',{clearProps:'all'});
+    transformTl
+      .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none',duration:.28},0)
+      .to(tsteps[0],{autoAlpha:0,y:-42,duration:.06},.20)
+      .to('.transform-layer.l2',{clipPath:'inset(0% 0 0 0)',duration:.12,ease:'none'},.22)
+      .fromTo(tsteps[1],{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.07},.28)
+      .to('.transform-layer.l2',{scale:1.09,xPercent:2,ease:'none',duration:.18},.30)
+      .to(tsteps[1],{autoAlpha:0,y:-42,duration:.06},.50)
+      .to('.transform-layer.l3',{clipPath:'circle(150% at 72% 55%)',duration:.12,ease:'none'},.52)
+      .fromTo(tsteps[2],{autoAlpha:0,y:42},{autoAlpha:1,y:0,duration:.07},.60)
+      .to('.transform-layer.l3',{scale:1.08,xPercent:-1,ease:'none',duration:.18},.66)
+      .to('.transform-meter span',{height:'100%',duration:1,ease:'none'},0);
   } else {
-    gsap.set(tsteps,{y:0,autoAlpha:0});
-    gsap.set(tsteps[0],{autoAlpha:1});
-    const transformTl = gsap.timeline({scrollTrigger:{trigger:'.transform-section',start:'top top',end:'bottom bottom',scrub:1}});
     transformTl
       .to('.transform-layer.l1',{scale:1.12,xPercent:-2,ease:'none'},0)
       .to(tsteps[0],{autoAlpha:0,y:-55,duration:.12},.23)
@@ -645,13 +647,18 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       .to(tsteps[2],{autoAlpha:1,y:0,duration:.12,ease:'power2.out'},.76);
   }
 
-  // Before/after stage: desktop only. Mobile displays the comparison as a regular stack.
+  // Before/after stage. Mobile keeps the original split-screen choreography with a short scene.
   const icopy = $$('.insight-copy');
+  const insightTl = gsap.timeline({scrollTrigger:{trigger:'.insight',start:'top top',end:'bottom bottom',scrub:nativeScroll ? .55 : 1}});
   if (mobileLayout) {
-    gsap.set('.insight-before,.insight-after',{clearProps:'all'});
-    gsap.set(icopy,{clearProps:'all',autoAlpha:1,y:0});
+    insightTl
+      .to('.insight-before img',{scale:1.1,xPercent:-3,ease:'none',duration:.52},0)
+      .to('.insight-after',{clipPath:'inset(0 0% 0 0)',duration:.34,ease:'none'},.34)
+      .to('.insight-divider',{left:'100%',opacity:1,duration:.34,ease:'none'},.34)
+      .to(icopy[0],{opacity:0,y:-50,duration:.08},.64)
+      .fromTo(icopy[1],{opacity:0,y:50},{opacity:1,y:0,duration:.09},.73)
+      .to('.insight-after img',{scale:1.08,xPercent:2,ease:'none',duration:.20},.76);
   } else {
-    const insightTl = gsap.timeline({scrollTrigger:{trigger:'.insight',start:'top top',end:'bottom bottom',scrub:1}});
     insightTl
       .to('.insight-before img',{scale:1.1,xPercent:-3,ease:'none'},0)
       .to('.insight-after',{clipPath:'inset(0 0% 0 0)',duration:.45,ease:'none'},.28)
@@ -659,51 +666,6 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       .to(icopy[0],{opacity:0,y:-50,duration:.12},.48)
       .fromTo(icopy[1],{opacity:0,y:50},{opacity:1,y:0,duration:.16},.56)
       .to('.insight-after img',{scale:1.08,xPercent:2,ease:'none'},.54);
-  }
-
-  // Mobile-only reveal system. It uses IntersectionObserver rather than scrub/pinning:
-  // every element animates once as it enters the viewport, while the page keeps native scroll.
-  if (mobileMotion) {
-    const mobileTargets = [
-      ...$$('.manifesto .eyebrow,.manifesto-copy,.manifesto-note'),
-      ...$$('.transform-layer,.transform-step'),
-      $('.insight-stage'), ...$$('.insight-copy'),
-      ...$$('.service-row,.process-line,.cta-inner')
-    ].filter(Boolean);
-    mobileTargets.forEach((el,index) => {
-      el.classList.add('mobile-reveal');
-      el.style.setProperty('--mobile-delay', `${Math.min(index * 40, 160)}ms`);
-    });
-    let revealObserver = null;
-    const revealInViewport = () => {
-      mobileTargets.forEach(el => {
-        if (el.classList.contains('is-visible')) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top < innerHeight * .96 && rect.bottom > innerHeight * .04) {
-          el.classList.add('is-visible');
-          revealObserver?.unobserve(el);
-        }
-      });
-    };
-    if ('IntersectionObserver' in window) {
-      revealObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        });
-        requestAnimationFrame(revealInViewport);
-      }, { rootMargin:'0px 0px -8% 0px', threshold:.08 });
-      mobileTargets.forEach(el => revealObserver.observe(el));
-    }
-    addEventListener('scroll', revealInViewport, {passive:true});
-    addEventListener('resize', revealInViewport, {passive:true});
-    requestAnimationFrame(revealInViewport);
-    setTimeout(revealInViewport, 240);
-    const revealTimer = setInterval(() => {
-      revealInViewport();
-      if (mobileTargets.every(el => el.classList.contains('is-visible'))) clearInterval(revealTimer);
-    }, 180);
   }
 
   // Project gallery. On desktop it keeps the cinematic vertical-to-horizontal sequence.
@@ -752,13 +714,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     document.body.classList.remove('is-page-dragging');
     railDrag = null;
   };
-  track?.addEventListener('pointerdown', event => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    if (event.target.closest('a,button')) return;
-    railDrag = { pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null };
-    track.setPointerCapture?.(event.pointerId);
-  });
-  track?.addEventListener('pointermove', event => {
+  const updateRailDrag = event => {
     if (!railDrag || event.pointerId !== railDrag.pointerId) return;
     const dx = event.clientX - railDrag.startX;
     const dy = event.clientY - railDrag.startY;
@@ -775,15 +731,29 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     track.classList.add('is-dragging');
     if (touchLayout) track.scrollLeft = railDrag.startLeft - dx;
     else window.scrollTo(0, railDrag.startPage - dx * 1.15);
-  }, { passive:false });
-  track?.addEventListener('pointerup', endRailDrag);
-  track?.addEventListener('pointercancel', endRailDrag);
+  };
+  const startRailDrag = event => {
+    const rail = event.target?.closest?.('.work-track');
+    if (!rail || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (event.target?.closest?.('a,button')) return;
+    if (event.pointerType === 'mouse') event.preventDefault();
+    railDrag = { pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, startLeft:rail.scrollLeft, startPage:scrollY, moved:false, axis:null };
+    rail.setPointerCapture?.(event.pointerId);
+  };
+  // Capture before an image or another child can start the browser's native drag gesture.
+  document.addEventListener('pointerdown', startRailDrag, { capture:true, passive:false });
+  track?.addEventListener('dragstart', event => event.preventDefault());
+  document.addEventListener('pointermove', updateRailDrag, { passive:false });
+  document.addEventListener('pointerup', endRailDrag);
+  document.addEventListener('pointercancel', endRailDrag);
+  track?.addEventListener('lostpointercapture', endRailDrag);
 
   // On the rest of the page, dragging vertically scrolls the document like a touch gesture.
   let pageDrag = null;
   const isExcludedDragTarget = target => target?.closest?.('a,button,input,textarea,select,.work-track');
   addEventListener('pointerdown', event => {
     if (event.pointerType !== 'mouse' || event.button !== 0 || isExcludedDragTarget(event.target)) return;
+    if (event.target?.closest?.('img')) event.preventDefault();
     pageDrag = { pointerId:event.pointerId, startY:event.clientY, startScroll:scrollY, moved:false };
   });
   addEventListener('pointermove', event => {
