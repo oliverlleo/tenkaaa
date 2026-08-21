@@ -718,9 +718,20 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     if (!railDrag || event.pointerId !== railDrag.pointerId) return;
     const dx = event.clientX - railDrag.startX;
     const dy = event.clientY - railDrag.startY;
-    if (Math.abs(dx) + Math.abs(dy) < 5) return;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+    if (Math.hypot(dx, dy) < 10) return;
+    // Do not commit to an axis on a tiny diagonal twitch. Once the gesture is clear,
+    // allow a vertical swipe to take over even if the first few pixels leaned sideways.
+    if (!railDrag.axis) {
+      if (absX < absY * 1.2 && absY < absX * 1.2) return;
+      railDrag.axis = absX > absY ? 'x' : 'y';
+    } else if (railDrag.axis === 'x' && absY > absX * 1.15 && absY > 24) {
+      railDrag.axis = 'y';
+    } else if (railDrag.axis === 'y' && absX > absY * 1.15 && absX > 24) {
+      railDrag.axis = 'x';
+    }
     railDrag.moved = true;
-    railDrag.axis ||= Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
     event.preventDefault();
     document.body.classList.add('is-page-dragging');
     if (railDrag.axis === 'y') {
