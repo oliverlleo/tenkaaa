@@ -214,7 +214,8 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 /* ---------- mobile ---------- */
 @media(max-width:900px){
   :root{
-    /* Enough room for the three narrative beats without making the page feel trapped. */
+    /* Use the larger usable height so browser/system bars never expose the scene background. */
+    --scene-visible:max(var(--scene-h, 100lvh), 100dvh);
     --transform-travel:clamp(520px,80svh,760px);
     --insight-travel:clamp(300px,45svh,430px);
   }
@@ -222,8 +223,8 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   /* Mobile: preserve the cinematic choreography without trapping the swipe.
      A stable large-viewport height prevents Chrome's top/bottom bars from changing
      sticky geometry or exposing the section background in the middle of a gesture. */
-  .hero{height:calc(var(--scene-h, 100lvh) + 150px);background:var(--ink)}
-  .hero-pin,.transform-pin,.insight-pin{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
+  .hero{height:calc(var(--scene-visible) + 150px);background:var(--ink)}
+  .hero-pin,.transform-pin,.insight-pin{height:var(--scene-visible);min-height:var(--scene-visible)}
   .hero-pin,.transform-pin,.insight-pin{overscroll-behavior-y:auto;touch-action:pan-y;transform:translateZ(0);backface-visibility:hidden}
   .transform-pin{background:var(--ink)}
   /* Only Habitar needs extra coverage: its circular reveal must reach every portrait corner. */
@@ -238,10 +239,10 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
   /* Gesture-sized travel: Entender, Traduzir and Habitar each receive a deliberate beat.
      The final portion holds Habitar before the sticky scene can hand off to the next section. */
-  .transform-section{height:calc(var(--scene-h, 100lvh) + var(--transform-travel));background:var(--ink)}
+  .transform-section{height:calc(var(--scene-visible) + var(--transform-travel));background:var(--ink)}
   .transform-copy{left:24px}.transform-meter{right:18px;height:220px}.transform-step h2{font-size:clamp(52px,18vw,98px)}
 
-  .insight{height:calc(var(--scene-h, 100lvh) + var(--insight-travel))}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
+  .insight{height:calc(var(--scene-visible) + var(--insight-travel))}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
 
   /* Mobile/touch: vertical scrolling remains native. The project rail can still be moved sideways,
      but it cannot pin/consume the vertical page scroll. */
@@ -256,7 +257,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .services{padding:72px 0}.services-head{grid-template-columns:repeat(6,1fr)}.services-head .eyebrow{grid-column:1/7}.services-head p{grid-column:2/7;margin-top:24px}.service-row{grid-template-columns:.7fr 5fr}.service-row p{grid-column:2/3}.service-preview{display:none}
   .philosophy{min-height:100vh}.ring{width:38vw;height:38vw}.ring:nth-child(2){width:74vw;height:74vw}.ring:nth-child(3){width:112vw;height:112vw}.ring:nth-child(4){width:160vw;height:160vw}
   .process{padding:72px 0}.process-intro{grid-template-columns:repeat(6,1fr)}.process-intro .eyebrow{grid-column:1/7}.process-intro h2{grid-column:1/7;margin-top:25px}.process-list{display:block}.process-line{grid-template-columns:.7fr 5fr;gap:12px}.process-line p{grid-column:2/3;margin-top:4px}
-  .cta{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
+  .cta{height:var(--scene-visible);min-height:var(--scene-visible)}
   .footer-inner{flex-direction:column}
   .work-cta{position:relative;left:auto;bottom:auto;padding:24px 16px 34px}
   .hero-actions{margin-top:24px}
