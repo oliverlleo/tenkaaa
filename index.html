@@ -1,13 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="no-js">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#B66343" />
 <title>TENKA — Arquitetura & Interiores</title>
-<meta name="description" content="TENKA Arquitetura — projetos, reformas e acompanhamento em Sorocaba. Fazemos casa com cara de lar." />
-<link rel="preconnect" href="https://images.unsplash.com" />
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <meta name="description" content="TENKA Arquitetura — projetos, reformas e acompanhamento em Sorocaba. Fazemos casa com cara de lar." />
+  <link rel="canonical" href="https://oliverlleo.github.io/tenkaaa/" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="TENKA — Arquitetura & Interiores" />
+  <meta property="og:description" content="Projetos autorais que unem beleza, funcionalidade e a personalidade de quem vai viver cada espaço." />
+  <meta property="og:url" content="https://oliverlleo.github.io/tenkaaa/" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=85" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TENKA — Arquitetura & Interiores" />
+  <meta name="twitter:description" content="Projetos autorais que unem beleza, funcionalidade e a personalidade de quem vai viver cada espaço." />
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=85" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=82" fetchpriority="high" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ProfessionalService",
+    "name":"TENKA — Arquitetura & Interiores",
+    "url":"https://oliverlleo.github.io/tenkaaa/",
+    "description":"Projetos de arquitetura, interiores, reformas e acompanhamento em Sorocaba.",
+    "areaServed":"Sorocaba, SP",
+    "sameAs":["https://instagram.com/tenkaarquitetura"]
+  }
+  </script>
 <style>
 :root{
   --terracotta:#B66343;
@@ -24,7 +49,11 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:auto;background:var(--paper);overflow-anchor:none}
 body{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper);overflow-x:hidden}
-body.locked{overflow:hidden}
+body.locked,body.menu-open{overflow:hidden}
+a:focus-visible,button:focus-visible,.project:focus-visible{outline:2px solid var(--clay);outline-offset:5px}
+html.motion-fallback .hero-title .line span,html.motion-fallback .manifesto-copy .word span{transform:none!important}
+html.no-js .hero-title .line span{transform:none}
+img.is-broken{background:linear-gradient(135deg,var(--sand),var(--clay));object-fit:cover}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
 img{display:block;width:100%;height:100%;object-fit:cover}
@@ -60,8 +89,11 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .nav-link{position:relative;padding:8px 0}
 .nav-link:after{content:"";position:absolute;left:0;bottom:2px;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s ease}
 .nav-link:hover:after{transform:scaleX(1);transform-origin:left}
-.menu-btn{display:none;background:none;border:0;width:42px;height:42px;position:relative}
-.menu-btn span{position:absolute;left:9px;width:24px;height:1px;background:currentColor;transition:.3s}.menu-btn span:first-child{top:16px}.menu-btn span:last-child{top:25px}
+.menu-btn{display:none;background:none;border:0;width:42px;height:42px;position:relative;z-index:3}
+.menu-btn span{position:absolute;left:9px;width:24px;height:1px;background:currentColor;transition:transform .25s ease,top .25s ease}.menu-btn span:first-child{top:16px}.menu-btn span:last-child{top:25px}
+.nav.is-open .menu-btn span:first-child{top:20px;transform:rotate(45deg)}
+.nav.is-open .menu-btn span:last-child{top:20px;transform:rotate(-45deg)}
+.nav.is-open{background:var(--ink);color:#fff;mix-blend-mode:normal}
 
 /* ---------- hero ---------- */
 .hero{height:260vh;position:relative;background:var(--cream)}
@@ -75,7 +107,8 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .hero-kicker:before{content:"";width:42px;height:1px;background:currentColor}
 .hero-title{font-size:clamp(62px,10vw,158px);line-height:.83;letter-spacing:-.07em;max-width:1000px}
 .hero-title .line{display:block;overflow:hidden;padding-bottom:.08em}
-.hero-title .line span{display:block;transform:translateY(115%)}
+.hero-title .line span{display:block;transform:none}
+html.js-ready .hero-title .line span{transform:translateY(115%)}
 .hero-side{grid-column:10/13;align-self:end;padding-bottom:10px;font-size:13px;line-height:1.55;max-width:240px;opacity:.9}
 .scroll-indicator{position:absolute;right:34px;bottom:34px;color:#fff;z-index:4;display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;transform:rotate(90deg);transform-origin:right bottom}
 .scroll-indicator i{display:block;width:52px;height:1px;background:rgba(255,255,255,.55);overflow:hidden;position:relative}.scroll-indicator i:after{content:"";position:absolute;inset:0;background:#fff;animation:scan 1.8s infinite ease-in-out}
@@ -129,7 +162,8 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .work-pin{height:100vh;position:sticky;top:0;overflow:hidden}
 .work-head{position:absolute;top:48px;left:max(24px,calc((100vw - 1240px)/2));right:max(24px,calc((100vw - 1240px)/2));display:flex;justify-content:space-between;align-items:flex-end;z-index:4}
 .work-head h2{font-size:clamp(38px,5vw,74px);letter-spacing:-.05em;font-weight:400}.work-head p{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.6}
-.work-track{position:absolute;left:0;top:0;height:100%;display:flex;gap:20px;padding:160px max(24px,calc((100vw - 1240px)/2)) 54px;will-change:transform}
+.work-track{position:absolute;left:0;top:0;height:100%;display:flex;gap:20px;padding:160px max(24px,calc((100vw - 1240px)/2)) 54px;will-change:transform;scrollbar-width:none}.work-track::-webkit-scrollbar{display:none}
+.work-controls{position:absolute;right:max(24px,calc((100vw - 1240px)/2));bottom:30px;z-index:6;display:flex;gap:8px}.work-control{border:1px solid rgba(255,255,255,.42);background:rgba(30,26,23,.45);color:#fff;border-radius:999px;padding:10px 14px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;transition:background .2s ease,transform .2s ease}.work-control:hover,.work-control:focus-visible{background:rgba(255,255,255,.16)}.work-control:active{transform:scale(.97)}
 .project{width:min(74vw,920px);height:100%;flex:none;position:relative;overflow:hidden;background:#29231f}
 .project img{transition:filter .6s ease;filter:saturate(.75) contrast(.93);transform:scale(1.05)}
 .project:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.62));pointer-events:none}
@@ -167,7 +201,14 @@ img{display:block;width:100%;height:100%;object-fit:cover}
 .cta:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,12,.16),rgba(20,15,12,.55))}
 .cta-inner{position:relative;z-index:2;text-align:center;width:min(1100px,calc(100% - 48px))}
 .cta .eyebrow{margin-bottom:28px}.cta h2{font-size:clamp(55px,9.2vw,145px);font-weight:400;line-height:.84;letter-spacing:-.065em;margin-bottom:42px}.cta h2 em{font-family:Georgia,serif;font-weight:400}
-.cta-btn{display:inline-flex;align-items:center;gap:18px;border:1px solid rgba(255,255,255,.66);border-radius:999px;padding:18px 26px 18px 30px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px);transition:background .3s,color .3s}.cta-btn i{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-style:normal;transition:transform .35s}.cta-btn:hover{background:#fff;color:var(--ink)}.cta-btn:hover i{transform:rotate(45deg)}
+.cta-actions,.hero-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
+.hero-actions{justify-content:flex-start;margin-top:30px}
+.cta-btn{display:inline-flex;align-items:center;gap:18px;border:1px solid rgba(255,255,255,.66);border-radius:999px;padding:18px 26px 18px 30px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(8px);transition:background .3s,color .3s,transform .2s ease}.cta-btn i{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-style:normal;transition:transform .35s}.cta-btn:hover{background:#fff;color:var(--ink)}.cta-btn:hover i{transform:rotate(45deg)}
+.cta-btn.secondary{background:rgba(255,255,255,.08)}
+.cta-btn:active{transform:scale(.97)}
+.work-cta{position:absolute;left:max(24px,calc((100vw - 1240px)/2));bottom:30px;z-index:5}
+.work-cta .cta-btn{padding:12px 18px;font-size:10px}
+.work-cta .cta-btn i{width:26px;height:26px}
 
 footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid rgba(255,255,255,.12)}
 .footer-inner{display:flex;justify-content:space-between;gap:20px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.72}
@@ -179,7 +220,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     --transform-travel:clamp(1000px,165svh,1450px);
     --insight-travel:clamp(500px,72svh,680px);
   }
-  .nav-links{display:none}.menu-btn{display:block}
+  .nav-links{position:fixed;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:22px;padding:96px 24px 48px;background:var(--ink);color:#fff;font-size:clamp(34px,9vw,62px);letter-spacing:-.04em;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-14px);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}.nav.is-open .nav-links{opacity:1;visibility:visible;pointer-events:auto;transform:none}.nav-links .nav-link{padding:0}.menu-btn{display:block}
   /* Mobile: preserve the cinematic choreography without trapping the swipe.
      A stable large-viewport height prevents Chrome's top/bottom bars from changing
      sticky geometry or exposing the section background in the middle of a gesture. */
@@ -209,6 +250,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .work{height:auto;min-height:100vh}
   .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
   .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:pan-x pan-y}
+  .work-controls{position:relative;right:auto;bottom:auto;padding:18px 16px 0}.work-control{font-size:9px}
   .work-track::-webkit-scrollbar{display:none}
   .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
   .work-head{top:30px}.work-head p{display:none}
@@ -218,13 +260,17 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .process{padding:72px 0}.process-intro{grid-template-columns:repeat(6,1fr)}.process-intro .eyebrow{grid-column:1/7}.process-intro h2{grid-column:1/7;margin-top:25px}.process-list{display:block}.process-line{grid-template-columns:.7fr 5fr;gap:12px}.process-line p{grid-column:2/3;margin-top:4px}
   .cta{height:var(--scene-h, 100lvh);min-height:var(--scene-h, 100lvh)}
   .footer-inner{flex-direction:column}
+  .work-cta{position:relative;left:auto;bottom:auto;padding:24px 16px 34px}
+  .hero-actions{margin-top:24px}
+  .cta-actions{align-items:stretch;flex-direction:column}
+  .cta-actions .cta-btn{justify-content:center}
   .noise{mix-blend-mode:normal;opacity:.025}
 }
-@media(max-width:540px){.container,.nav-inner{width:calc(100% - 32px)}.nav{padding:18px 0}.brand span{display:none}.hero-grid{width:calc(100% - 32px)}.hero-kicker{font-size:9px}.scroll-indicator{display:none}.project-meta{left:18px;right:18px;bottom:18px}.project-meta span{display:none}.work-track{padding-left:16px;padding-right:16px}.work-head{left:16px;right:16px}.service-row h3{font-size:40px}.cta-inner{width:calc(100% - 32px)}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.cursor,.cursor-dot{display:none!important}.loader{display:none}.hero{height:100vh}.hero-pin,.transform-pin,.insight-pin,.work-pin{position:relative}.transform-section,.insight,.work{height:auto}.hero-media{clip-path:none}.hero-title .line span,.manifesto-copy .word span{transform:none}.transform-layer,.insight-after,.insight-copy,.transform-step{opacity:1!important;transform:none!important;clip-path:none!important}.work-track{position:relative;display:grid;transform:none!important}.project{width:100%;min-height:66vh}.transform-section{display:none}}
+@media(max-width:540px){.container,.nav-inner{width:calc(100% - 32px)}.nav{padding:18px 0}.brand span{display:none}.hero-grid{width:calc(100% - 32px)}.hero-kicker{font-size:9px}.scroll-indicator{display:none}.project-meta{left:18px;right:18px;bottom:18px}.project-meta span{display:none}.work-track{padding-left:16px;padding-right:16px}.work-head{left:16px;right:16px}.service-row h3{font-size:40px}.cta-inner{width:calc(100% - 32px)}.hero-actions .cta-btn{padding:14px 18px 14px 20px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.cursor,.cursor-dot{display:none!important}.loader{display:none}.hero{height:100vh}.hero-pin,.transform-pin,.insight-pin,.work-pin{position:relative}.transform-section,.insight,.work{height:auto}.hero-media{clip-path:none}.hero-title .line span,.manifesto-copy .word span{transform:none}.transform-layer,.insight-after,.insight-copy,.transform-step{opacity:1!important;transform:none!important;clip-path:none!important}  .work-track{position:relative;display:grid;transform:none!important}.work-controls{display:none}.project{width:100%;min-height:66vh}.transform-section{display:none}.hero-actions{margin-top:18px}}
 </style>
 </head>
-<body class="locked">
+<body>
 <div class="noise"></div>
 <div class="cursor"></div><div class="cursor-dot"></div>
 
@@ -252,13 +298,13 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       </svg>
       <span>TENKA</span>
     </a>
-    <nav class="nav-links" aria-label="Principal">
+    <nav class="nav-links" id="primary-nav" aria-label="Principal">
       <a class="nav-link magnetic" href="#projetos">Projetos</a>
       <a class="nav-link magnetic" href="#servicos">Serviços</a>
       <a class="nav-link magnetic" href="#processo">Processo</a>
       <a class="nav-link magnetic" href="#contato">Contato</a>
     </nav>
-    <button class="menu-btn" aria-label="Abrir menu"><span></span><span></span></button>
+    <button class="menu-btn" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span></button>
   </div>
 </header>
 
@@ -266,7 +312,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 <section class="hero" id="inicio">
   <div class="hero-pin">
     <div class="hero-media">
-      <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=90" alt="Interior contemporâneo com madeira e iluminação quente" />
+      <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=82" srcset="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=75 800w, https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=82 1600w" sizes="100vw" alt="Interior contemporâneo com madeira e iluminação quente" width="1600" height="1067" fetchpriority="high" decoding="async" />
       <div class="hero-overlay"></div>
     </div>
     <div class="hero-grid">
@@ -277,7 +323,12 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
           <span class="line"><span>cara de <em class="serif">lar.</em></span></span>
         </h1>
       </div>
-      <p class="hero-side">Projetos autorais que unem beleza, funcionalidade e a personalidade de quem vai viver cada espaço.</p>
+      <div class="hero-side">
+        <p>Projetos autorais que unem beleza, funcionalidade e a personalidade de quem vai viver cada espaço.</p>
+        <div class="hero-actions" aria-label="Contato TENKA">
+          <a class="cta-btn" href="https://ig.me/m/tenkaarquitetura" target="_blank" rel="noopener">Falar no Direct <i>↗</i></a>
+        </div>
+      </div>
     </div>
     <div class="scroll-indicator">Explore <i></i></div>
   </div>
@@ -286,16 +337,16 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 <section class="manifesto">
   <div class="container manifesto-grid">
     <div class="eyebrow">Manifesto TENKA</div>
-    <div class="manifesto-copy" aria-label="A arquitetura começa antes da forma. Começa na forma como você quer viver."></div>
+    <div class="manifesto-copy" aria-label="A arquitetura começa antes da forma. Começa na forma como você quer viver.">A arquitetura começa antes da forma. Começa na forma como você quer viver.</div>
     <p class="manifesto-note">Cada escolha nasce de um motivo: a luz que entra pela manhã, o caminho que você percorre pela casa, o material que envelhece bem e os detalhes que fazem o espaço parecer seu.</p>
   </div>
 </section>
 
 <section class="transform-section" aria-label="Do espaço ao lar">
   <div class="transform-pin">
-    <div class="transform-layer l1"><img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2200&q=90" alt="Ambiente residencial contemporâneo" /></div>
-    <div class="transform-layer l2"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=90" alt="Sala com materiais naturais" /></div>
-    <div class="transform-layer l3"><img src="https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=2200&q=90" alt="Interior sofisticado e acolhedor" /></div>
+    <div class="transform-layer l1"><img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1600&q=82" alt="Ambiente residencial contemporâneo" width="1600" height="1067" loading="lazy" decoding="async" /></div>
+    <div class="transform-layer l2"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=82" alt="Sala com materiais naturais" width="1600" height="1067" loading="lazy" decoding="async" /></div>
+    <div class="transform-layer l3"><img src="https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=1600&q=82" alt="Interior sofisticado e acolhedor" width="1600" height="1067" loading="lazy" decoding="async" /></div>
     <div class="transform-vignette"></div>
     <div class="transform-copy">
       <article class="transform-step"><div class="step-index">01 — Escuta</div><h2>Entender.</h2><p>Antes do desenho, existe uma rotina, uma história e uma forma particular de viver.</p></article>
@@ -309,8 +360,8 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 <section class="insight" aria-label="O olhar TENKA">
   <div class="insight-pin">
     <div class="insight-stage">
-      <div class="insight-before"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1700&q=90" alt="Ambiente antes da intervenção de design" /></div>
-      <div class="insight-after"><img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1700&q=90" alt="Ambiente transformado por arquitetura e interiores" /></div>
+      <div class="insight-before"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80" alt="Ambiente antes da intervenção de design" width="1400" height="933" loading="lazy" decoding="async" /></div>
+      <div class="insight-after"><img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80" alt="Ambiente transformado por arquitetura e interiores" width="1400" height="933" loading="lazy" decoding="async" /></div>
       <div class="insight-divider"></div>
     </div>
     <aside class="insight-panel">
@@ -326,29 +377,34 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
 <section class="work" id="projetos">
   <div class="work-pin">
-    <div class="work-head"><h2>Projetos que se sentem.</h2><p>Deslize através dos espaços</p></div>
-    <div class="work-track">
-      <article class="project">
-        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — sala" />
+    <div class="work-head"><h2 id="projects-title">Projetos que se sentem.</h2><p>Deslize ou use os controles para explorar</p></div>
+    <div class="work-track" role="region" aria-roledescription="carrossel" aria-label="Projetos TENKA" aria-labelledby="projects-title" tabindex="0">
+      <article class="project" role="group" aria-roledescription="projeto" tabindex="0" aria-label="Casa Alma, interiores, Sorocaba">
+        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=82" srcset="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=75 800w, https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=82 1600w" sizes="(max-width: 900px) 84vw, 74vw" alt="Projeto residencial TENKA — sala" width="1600" height="1067" loading="lazy" decoding="async" />
         <span class="project-tag">Interiores</span>
         <div class="project-meta"><h3>Casa Alma</h3><span>Sorocaba — SP<br>2026</span></div>
       </article>
-      <article class="project">
-        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — cozinha" />
+      <article class="project" role="group" aria-roledescription="projeto" tabindex="0" aria-label="Apartamento Luz, reforma, Campolim">
+        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=82" srcset="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800&q=75 800w, https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=82 1600w" sizes="(max-width: 900px) 84vw, 74vw" alt="Projeto residencial TENKA — cozinha" width="1600" height="1067" loading="lazy" decoding="async" />
         <span class="project-tag">Reforma</span>
         <div class="project-meta"><h3>Apartamento Luz</h3><span>Campolim — SP<br>2026</span></div>
       </article>
-      <article class="project">
-        <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — estar" />
+      <article class="project" role="group" aria-roledescription="projeto" tabindex="0" aria-label="Casa Entre, arquitetura, Interior de São Paulo">
+        <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=82" srcset="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=800&q=75 800w, https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=82 1600w" sizes="(max-width: 900px) 84vw, 74vw" alt="Projeto residencial TENKA — estar" width="1600" height="1067" loading="lazy" decoding="async" />
         <span class="project-tag">Arquitetura</span>
         <div class="project-meta"><h3>Casa Entre</h3><span>Interior — SP<br>2025</span></div>
       </article>
-      <article class="project">
-        <img src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1800&q=90" alt="Projeto residencial TENKA — dormitório" />
+      <article class="project" role="group" aria-roledescription="projeto" tabindex="0" aria-label="Refúgio 06, interiores, Sorocaba">
+        <img src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1600&q=82" srcset="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=800&q=75 800w, https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1600&q=82 1600w" sizes="(max-width: 900px) 84vw, 74vw" alt="Projeto residencial TENKA — dormitório" width="1600" height="1067" loading="lazy" decoding="async" />
         <span class="project-tag">Interiores</span>
         <div class="project-meta"><h3>Refúgio 06</h3><span>Sorocaba — SP<br>2025</span></div>
       </article>
     </div>
+    <div class="work-controls" aria-label="Controles da galeria de projetos">
+      <button class="work-control" type="button" data-work-prev aria-label="Projeto anterior">← Anterior</button>
+      <button class="work-control" type="button" data-work-next aria-label="Próximo projeto">Próximo →</button>
+    </div>
+    <div class="work-cta"><a class="cta-btn" href="https://ig.me/m/tenkaarquitetura" target="_blank" rel="noopener">Falar sobre um projeto <i>↗</i></a></div>
   </div>
 </section>
 
@@ -360,9 +416,9 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     <div class="service-row" data-preview="2"><div class="num">03</div><h3>Acompanhamento</h3><p>Presença técnica para preservar a intenção do projeto durante a obra.</p></div>
   </div>
   <div class="service-preview" aria-hidden="true">
-    <img class="active" src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80" alt="" />
-    <img src="https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=900&q=80" alt="" />
-    <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=900&q=80" alt="" />
+    <img class="active" src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80" alt="" width="900" height="600" loading="lazy" decoding="async" />
+    <img src="https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=900&q=80" alt="" width="900" height="600" loading="lazy" decoding="async" />
+    <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=900&q=80" alt="" width="900" height="600" loading="lazy" decoding="async" />
   </div>
 </section>
 
@@ -388,25 +444,54 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 </section>
 
 <section class="cta" id="contato">
-  <div class="cta-bg"><img src="https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=2200&q=90" alt="Interior acolhedor em tons naturais" /></div>
+  <div class="cta-bg"><img src="https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=1600&q=82" alt="Interior acolhedor em tons naturais" width="1600" height="1067" loading="lazy" decoding="async" /></div>
   <div class="cta-inner">
     <div class="eyebrow">Vamos imaginar juntos?</div>
     <h2>Seu espaço pode<br>ter mais <em>você.</em></h2>
-    <a class="cta-btn magnetic" href="https://instagram.com/tenkaarquitetura" target="_blank" rel="noopener">Começar uma conversa <i>↗</i></a>
+    <div class="cta-actions" aria-label="Canais de contato">
+      <a class="cta-btn magnetic" href="https://ig.me/m/tenkaarquitetura" target="_blank" rel="noopener">Falar no Direct <i>↗</i></a>
+      <a class="cta-btn secondary magnetic" href="https://instagram.com/tenkaarquitetura" target="_blank" rel="noopener">Ver Instagram <i>↗</i></a>
+    </div>
   </div>
 </section>
 </main>
 
-<footer><div class="container footer-inner"><span>© 2026 TENKA Arquitetura & Interiores</span><span>Sorocaba — SP</span><span>Instagram ↗</span></div></footer>
+<footer><div class="container footer-inner"><span>© 2026 TENKA Arquitetura & Interiores</span><span>Sorocaba — SP</span><a href="https://instagram.com/tenkaarquitetura" target="_blank" rel="noopener">Instagram ↗</a></div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
 <script>
 (() => {
+  const root = document.documentElement;
+  root.classList.remove('no-js');
+  root.classList.add('js-ready');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, c=document) => c.querySelector(s);
   const $$ = (s, c=document) => [...c.querySelectorAll(s)];
+  const nav = $('.nav');
+  const menuBtn = $('.menu-btn');
+  const primaryNav = $('#primary-nav');
+  const setMenu = (open, restoreFocus=false) => {
+    if (!nav || !menuBtn) return;
+    nav.classList.toggle('is-open', open);
+    document.body.classList.toggle('menu-open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    if (open) primaryNav?.querySelector('a')?.focus();
+    else if (restoreFocus) menuBtn.focus();
+  };
+  menuBtn?.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+  primaryNav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menuBtn?.getAttribute('aria-expanded') === 'true') setMenu(false, true);
+  });
+  addEventListener('resize', () => { if (innerWidth > 900) setMenu(false); });
+  const markImageFailure = img => img.addEventListener('error', () => {
+    img.classList.add('is-broken');
+    img.alt = img.alt || 'Imagem indisponível';
+  }, { once:true });
+  $$('img').forEach(markImageFailure);
 
   // Split manifesto copy without external text-splitting libs.
   const manifest = $('.manifesto-copy');
@@ -426,7 +511,8 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   }
 
   if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
-    document.body.classList.remove('locked');
+    root.classList.add('motion-fallback');
+    document.body.classList.remove('locked','menu-open');
     $('.loader')?.remove();
     return;
   }
@@ -494,7 +580,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     .to('.loader',{yPercent:-100,duration:1.05,ease:'power4.inOut',delay:.15})
     .set('.loader',{display:'none'})
     .call(()=>{
-      document.body.classList.remove('locked');
+      document.body.classList.remove('locked','menu-open');
       requestAnimationFrame(()=>ScrollTrigger.refresh());
     })
     .to('.hero-title .line span',{y:0,duration:1.15,stagger:.1,ease:'power4.out'},'-=.45')
@@ -590,13 +676,32 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // On touch/mobile, vertical scrolling remains 100% vertical; the same gallery can be swiped sideways natively.
   const track = $('.work-track');
   const touchLayout = mobileLayout;
+  const getTravel = () => track ? Math.max(0, track.scrollWidth - innerWidth) : 0;
+  let workTween = null;
   if (track && !touchLayout) {
-    const getTravel = () => Math.max(0, track.scrollWidth - innerWidth);
-    const workTween = gsap.to(track,{x:()=>-getTravel(),ease:'none',scrollTrigger:{trigger:'.work',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1.05,invalidateOnRefresh:true}});
+    workTween = gsap.to(track,{x:()=>-getTravel(),ease:'none',scrollTrigger:{trigger:'.work',start:'top top',end:'bottom bottom',scrub:nativeScroll ? true : 1.05,invalidateOnRefresh:true}});
     $$('.project img').forEach(img => {
       gsap.to(img,{xPercent:-4,scale:1.12,ease:'none',scrollTrigger:{trigger:img.closest('.project'),containerAnimation:workTween,start:'left right',end:'right left',scrub:true,invalidateOnRefresh:true}});
     });
   }
+  const moveProjects = direction => {
+    if (!track) return;
+    if (touchLayout) {
+      track.scrollBy({left:direction * Math.max(innerWidth * .78, 260), behavior:'smooth'});
+      return;
+    }
+    const trigger = workTween?.scrollTrigger;
+    if (!trigger) return;
+    const progressStep = Math.min(.32, Math.max(.12, (innerWidth * .78) / Math.max(getTravel(), innerWidth)));
+    const nextProgress = Math.max(0, Math.min(1, trigger.progress + direction * progressStep));
+    trigger.scroll(trigger.start + (trigger.end - trigger.start) * nextProgress);
+  };
+  $('[data-work-prev]')?.addEventListener('click', () => moveProjects(-1));
+  $('[data-work-next]')?.addEventListener('click', () => moveProjects(1));
+  track?.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') { event.preventDefault(); moveProjects(-1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); moveProjects(1); }
+  });
 
   // Service floating editorial preview
   const preview = $('.service-preview'), previewImgs = $$('.service-preview img');
@@ -639,7 +744,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   });
 
   // Anchor links through Lenis.
-  $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.getAttribute('href'));if(target&&lenis){e.preventDefault();lenis.scrollTo(target,{offset:0,duration:1.25});}}));
+  $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{setMenu(false);const target=$(a.getAttribute('href'));if(target&&lenis){e.preventDefault();lenis.scrollTo(target,{offset:0,duration:1.25});}}));
 
   ScrollTrigger.refresh();
   // Refresh once more after all remote images are decoded. This prevents late-loading media
