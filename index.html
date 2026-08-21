@@ -708,51 +708,74 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   // Click-and-drag on the rail: desktop maps horizontal movement to the pinned page scroll;
   // mobile uses the native horizontal scroll position. Links and controls remain clickable.
   let railDrag = null;
-  const endRailDrag = () => {
-    if (!railDrag) return;
+  let touchRailDrag = null;
+  const clearRailDrag = drag => {
+    if (!drag) return;
     track?.classList.remove('is-dragging');
     document.body.classList.remove('is-page-dragging');
+  };
+  const endRailDrag = () => {
+    clearRailDrag(railDrag);
     railDrag = null;
   };
-  const updateRailDrag = event => {
-    if (!railDrag || event.pointerId !== railDrag.pointerId) return;
-    const dx = event.clientX - railDrag.startX;
-    const dy = event.clientY - railDrag.startY;
+  const endTouchRailDrag = () => {
+    clearRailDrag(touchRailDrag);
+    touchRailDrag = null;
+  };
+  const applyRailDrag = (drag, dx, dy, event) => {
     const absX = Math.abs(dx);
     const absY = Math.abs(dy);
     if (Math.hypot(dx, dy) < 10) return;
     // Do not commit to an axis on a tiny diagonal twitch. Once the gesture is clear,
     // allow a vertical swipe to take over even if the first few pixels leaned sideways.
-    if (!railDrag.axis) {
+    if (!drag.axis) {
       if (absX < absY * 1.2 && absY < absX * 1.2) return;
-      railDrag.axis = absX > absY ? 'x' : 'y';
-    } else if (railDrag.axis === 'x' && absY > absX * 1.15 && absY > 24) {
-      railDrag.axis = 'y';
-    } else if (railDrag.axis === 'y' && absX > absY * 1.15 && absX > 24) {
-      railDrag.axis = 'x';
+      drag.axis = absX > absY ? 'x' : 'y';
+    } else if (drag.axis === 'x' && absY > absX * 1.15 && absY > 24) {
+      drag.axis = 'y';
+    } else if (drag.axis === 'y' && absX > absY * 1.15 && absX > 24) {
+      drag.axis = 'x';
     }
-    railDrag.moved = true;
-    event.preventDefault();
+    drag.moved = true;
+    if (event?.cancelable) event.preventDefault();
     document.body.classList.add('is-page-dragging');
-    if (railDrag.axis === 'y') {
+    if (drag.axis === 'y') {
       track.classList.remove('is-dragging');
-      window.scrollTo(0, railDrag.startPage - dy);
+      window.scrollTo(0, drag.startPage - dy);
       return;
     }
     track.classList.add('is-dragging');
-    if (touchLayout) track.scrollLeft = railDrag.startLeft - dx;
-    else window.scrollTo(0, railDrag.startPage - dx * 1.15);
+    if (touchLayout) track.scrollLeft = drag.startLeft - dx;
+    else window.scrollTo(0, drag.startPage - dx * 1.15);
+  };
+  const updateRailDrag = event => {
+    if (!railDrag || event.pointerId !== railDrag.pointerId) return;
+    applyRailDrag(railDrag, event.clientX - railDrag.startX, event.clientY - railDrag.startY, event);
   };
   const startRailDrag = event => {
     const rail = event.target?.closest?.('.work-track');
-    if (!rail || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (event.pointerType !== 'mouse' || !rail || event.button !== 0) return;
     if (event.target?.closest?.('a,button')) return;
-    if (event.pointerType === 'mouse') event.preventDefault();
+    event.preventDefault();
     railDrag = { pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, startLeft:rail.scrollLeft, startPage:scrollY, moved:false, axis:null };
     rail.setPointerCapture?.(event.pointerId);
   };
-  // Capture before an image or another child can start the browser's native drag gesture.
+  const startTouchRailDrag = event => {
+    if (!touchLayout || event.touches.length !== 1 || event.target?.closest?.('a,button')) return;
+    const point = event.touches[0];
+    touchRailDrag = { startX:point.clientX, startY:point.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null };
+  };
+  const updateTouchRailDrag = event => {
+    if (!touchRailDrag || event.touches.length !== 1) return;
+    const point = event.touches[0];
+    applyRailDrag(touchRailDrag, point.clientX - touchRailDrag.startX, point.clientY - touchRailDrag.startY, event);
+  };
+  // Mouse drag stays desktop-only; touch gets its own stream so an image cannot swallow the horizontal gesture.
   document.addEventListener('pointerdown', startRailDrag, { capture:true, passive:false });
+  track?.addEventListener('touchstart', startTouchRailDrag, { passive:true });
+  track?.addEventListener('touchmove', updateTouchRailDrag, { passive:false });
+  track?.addEventListener('touchend', endTouchRailDrag);
+  track?.addEventListener('touchcancel', endTouchRailDrag);
   track?.addEventListener('dragstart', event => event.preventDefault());
   document.addEventListener('pointermove', updateRailDrag, { passive:false });
   document.addEventListener('pointerup', endRailDrag);
