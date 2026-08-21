@@ -246,11 +246,12 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
 
   .insight{height:calc(var(--scene-visible) + var(--insight-travel))}.insight-pin{grid-template-columns:1fr;grid-template-rows:58% 42%}.insight-panel{padding:34px 24px 28px}.insight-copy-stack{min-height:190px}.insight-copy h2{font-size:clamp(38px,11vw,64px);margin-bottom:12px}.insight-number{display:none}
 
-  /* Mobile/touch: vertical scrolling remains native. The project rail can still be moved sideways,
-     but it cannot pin/consume the vertical page scroll. */
+  /* Mobile/touch: vertical scrolling remains native. Horizontal page panning is disabled;
+     only the image area opts into the custom project-rail swipe below. */
+  html,body{overflow-x:clip;overscroll-behavior-x:none;touch-action:pan-y}
   .work{height:auto;min-height:100vh}
   .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
-  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:none;cursor:grab}
+  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;overscroll-behavior-x:none;touch-action:pan-y;cursor:grab}
   .work-controls{position:relative;right:auto;bottom:auto;padding:18px 16px 0}.work-control{font-size:9px}
   .work-track::-webkit-scrollbar{display:none}
   .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
@@ -745,6 +746,11 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       window.scrollTo(0, drag.startPage - dy);
       return;
     }
+    if (touchLayout && !drag.canSwipe) {
+      track.classList.remove('is-dragging');
+      document.body.classList.remove('is-page-dragging');
+      return;
+    }
     if (event?.cancelable) event.preventDefault();
     document.body.classList.add('is-page-dragging');
     track.classList.add('is-dragging');
@@ -767,7 +773,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   const startTouchRailDrag = event => {
     if (!touchLayout || event.touches.length !== 1 || event.target?.closest?.('a,button')) return;
     const point = event.touches[0];
-    touchRailDrag = { startX:point.clientX, startY:point.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null };
+    touchRailDrag = { startX:point.clientX, startY:point.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null, canSwipe:Boolean(event.target?.closest?.('.project img')) };
   };
   const updateTouchRailDrag = event => {
     if (!touchRailDrag || event.touches.length !== 1) return;
