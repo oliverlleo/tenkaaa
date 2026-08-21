@@ -774,7 +774,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   const startTouchRailDrag = event => {
     if (!touchLayout || event.touches.length !== 1 || event.target?.closest?.('a,button')) return;
     const point = event.touches[0];
-    touchRailDrag = { startX:point.clientX, startY:point.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null, canSwipe:Boolean(event.target?.closest?.('.project img')) };
+    touchRailDrag = { startX:point.clientX, startY:point.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null, canSwipe:Boolean(event.target?.closest?.('.project')) };
   };
   const updateTouchRailDrag = event => {
     if (!touchRailDrag || event.touches.length !== 1) return;
