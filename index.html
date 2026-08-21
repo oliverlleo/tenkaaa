@@ -250,7 +250,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
      but it cannot pin/consume the vertical page scroll. */
   .work{height:auto;min-height:100vh}
   .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
-  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:none;cursor:grab}
+  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:pan-x pan-y;cursor:grab}
   .work-controls{position:relative;right:auto;bottom:auto;padding:18px 16px 0}.work-control{font-size:9px}
   .work-track::-webkit-scrollbar{display:none}
   .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
@@ -754,7 +754,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   };
   const startRailDrag = event => {
     const rail = event.target?.closest?.('.work-track');
-    if (event.pointerType !== 'mouse' || !rail || event.button !== 0) return;
+    if (!rail || (event.pointerType === 'mouse' && event.button !== 0)) return;
     if (event.target?.closest?.('a,button')) return;
     event.preventDefault();
     railDrag = { pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, startLeft:rail.scrollLeft, startPage:scrollY, moved:false, axis:null };
@@ -772,10 +772,6 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   };
   // Mouse drag stays desktop-only; touch gets its own stream so an image cannot swallow the horizontal gesture.
   document.addEventListener('pointerdown', startRailDrag, { capture:true, passive:false });
-  track?.addEventListener('touchstart', startTouchRailDrag, { passive:true });
-  track?.addEventListener('touchmove', updateTouchRailDrag, { passive:false });
-  track?.addEventListener('touchend', endTouchRailDrag);
-  track?.addEventListener('touchcancel', endTouchRailDrag);
   track?.addEventListener('dragstart', event => event.preventDefault());
   document.addEventListener('pointermove', updateRailDrag, { passive:false });
   document.addEventListener('pointerup', endRailDrag);
