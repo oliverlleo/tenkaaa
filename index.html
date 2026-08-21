@@ -250,7 +250,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
      but it cannot pin/consume the vertical page scroll. */
   .work{height:auto;min-height:100vh}
   .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
-  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:pan-x pan-y;cursor:grab}
+  .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:none;cursor:grab}
   .work-controls{position:relative;right:auto;bottom:auto;padding:18px 16px 0}.work-control{font-size:9px}
   .work-track::-webkit-scrollbar{display:none}
   .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
@@ -739,13 +739,14 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
       drag.axis = 'x';
     }
     drag.moved = true;
-    if (event?.cancelable) event.preventDefault();
-    document.body.classList.add('is-page-dragging');
     if (drag.axis === 'y') {
       track.classList.remove('is-dragging');
+      document.body.classList.remove('is-page-dragging');
       window.scrollTo(0, drag.startPage - dy);
       return;
     }
+    if (event?.cancelable) event.preventDefault();
+    document.body.classList.add('is-page-dragging');
     track.classList.add('is-dragging');
     if (touchLayout) track.scrollLeft = drag.startLeft - dx;
     else window.scrollTo(0, drag.startPage - dx * 1.15);
@@ -756,7 +757,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   };
   const startRailDrag = event => {
     const rail = event.target?.closest?.('.work-track');
-    if (!rail || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (event.pointerType !== 'mouse' || !rail || event.button !== 0) return;
     if (event.target?.closest?.('a,button')) return;
     if (event.pointerType === 'mouse') event.preventDefault();
     if (event.pointerType === 'touch') pointerTouchActive = true;
@@ -764,7 +765,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     if (event.pointerType === 'mouse') rail.setPointerCapture?.(event.pointerId);
   };
   const startTouchRailDrag = event => {
-    if (pointerTouchActive || !touchLayout || event.touches.length !== 1 || event.target?.closest?.('a,button')) return;
+    if (!touchLayout || event.touches.length !== 1 || event.target?.closest?.('a,button')) return;
     const point = event.touches[0];
     touchRailDrag = { startX:point.clientX, startY:point.clientY, startLeft:track.scrollLeft, startPage:scrollY, moved:false, axis:null };
   };
