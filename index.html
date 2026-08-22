@@ -221,7 +221,7 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     --transform-travel:clamp(520px,80svh,760px);
     --insight-travel:clamp(300px,45svh,430px);
   }
-  .nav-links{position:fixed;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:22px;padding:96px 24px 48px;background:var(--ink);color:#fff;font-size:clamp(34px,9vw,62px);letter-spacing:-.04em;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-14px);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}.nav.is-open .nav-links{opacity:1;visibility:visible;pointer-events:auto;transform:none}.nav-links .nav-link{padding:0}.menu-btn{display:block}
+  .nav-links{position:fixed;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:22px;padding:96px 24px 48px;background:var(--ink);color:#fff;font-size:clamp(34px,9vw,62px);letter-spacing:-.04em;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-14px);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}.nav.is-open .nav-links{opacity:1;visibility:visible;pointer-events:auto;transform:none}.nav-links .nav-link{padding:0}.menu-btn{display:block}.nav.is-scrolled:not(.is-open){background:rgba(30,26,23,.92);color:#fff;mix-blend-mode:normal;backdrop-filter:blur(10px)}
   /* Mobile: preserve the cinematic choreography without trapping the swipe.
      A stable large-viewport height prevents Chrome's top/bottom bars from changing
      sticky geometry or exposing the section background in the middle of a gesture. */
@@ -252,17 +252,17 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
   .work{height:auto;min-height:100vh}
   .work-pin{height:auto;min-height:100vh;position:relative;top:auto;overflow:hidden}
   .work-track{position:relative;left:auto;top:auto;height:auto;width:100%;padding-top:124px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-inline:contain;overscroll-behavior-x:none;touch-action:pan-y;cursor:grab}
-  .work-controls{position:relative;right:auto;bottom:auto;padding:18px 16px 0}.work-control{font-size:9px}
+  .work-controls{position:relative;right:auto;bottom:auto;padding:18px 16px 0}.work-control{font-size:9px;min-height:44px;padding:12px 16px}
   .work-track::-webkit-scrollbar{display:none}
   .work-track.is-dragging{scroll-snap-type:none}
-  .project{width:84vw;flex:0 0 84vw;min-height:72vh;scroll-snap-align:start}
+  .project{width:84vw;flex:0 0 84vw;height:72vh;min-height:0;scroll-snap-align:start}
   .work-head{top:30px}.work-head p{display:none}
 
   .services{padding:72px 0}.services-head{grid-template-columns:repeat(6,1fr)}.services-head .eyebrow{grid-column:1/7}.services-head p{grid-column:2/7;margin-top:24px}.service-row{grid-template-columns:.7fr 5fr}.service-row p{grid-column:2/3}.service-preview{display:none}
   .philosophy{min-height:100vh}.ring{width:38vw;height:38vw}.ring:nth-child(2){width:74vw;height:74vw}.ring:nth-child(3){width:112vw;height:112vw}.ring:nth-child(4){width:160vw;height:160vw}
   .process{padding:72px 0}.process-intro{grid-template-columns:repeat(6,1fr)}.process-intro .eyebrow{grid-column:1/7}.process-intro h2{grid-column:1/7;margin-top:25px}.process-list{display:block}.process-line{grid-template-columns:.7fr 5fr;gap:12px}.process-line p{grid-column:2/3;margin-top:4px}
   .cta{height:var(--scene-visible);min-height:var(--scene-visible)}
-  .footer-inner{flex-direction:column}
+  .footer-inner{flex-direction:column}.footer-inner a{display:inline-flex;align-items:center;min-height:44px}
   .work-cta{position:relative;left:auto;bottom:auto;padding:24px 16px 34px}
   .hero-actions{margin-top:24px}
   .cta-actions{align-items:stretch;flex-direction:column}
@@ -480,10 +480,13 @@ footer{background:var(--ink);color:#fff;padding:26px 0 34px;border-top:1px solid
     document.body.classList.toggle('menu-open', open);
     menuBtn.setAttribute('aria-expanded', String(open));
     menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-    if (open) primaryNav?.querySelector('a')?.focus();
-    else if (restoreFocus) menuBtn.focus();
+    if (open) setTimeout(() => primaryNav?.querySelector('a')?.focus({ preventScroll:true }), 240);
+    else if (restoreFocus) menuBtn.focus({ preventScroll:true });
   };
-  menuBtn?.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+  menuBtn?.addEventListener('click', () => { const open = menuBtn.getAttribute('aria-expanded') !== 'true'; setMenu(open, !open); });
+  const updateNavState = () => nav?.classList.toggle('is-scrolled', scrollY > 24);
+  addEventListener('scroll', updateNavState, { passive:true });
+  updateNavState();
   primaryNav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
   addEventListener('keydown', event => {
     if (event.key === 'Escape' && menuBtn?.getAttribute('aria-expanded') === 'true') setMenu(false, true);
