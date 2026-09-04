@@ -6,3 +6,51 @@
 .compare-label.before::after{content:"Interior";font-size:9px}
 .compare-label.after{font-size:0}
 .compare-label.after::after{content:"Exterior";font-size:9px}
+
+/* TENKA logo system */
+:root{
+  --tenka-mark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20132%20172%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M6%2059%2059%2012v47h61v15H59v53c0%2012%204%2021%2012%2028%208%207%2019%2010%2034%2010%2012%200%2022-2%2030-6l6%2016c-10%205-22%208-38%208-20%200-36-5-47-16-11-10-17-24-17-42V74H6V59Z%27%2F%3E%3C%2Fsvg%3E");
+}
+.brand-mark > *,
+.loader-logo > *{display:none}
+.brand-mark,
+.loader-logo{
+  background:currentColor;
+  -webkit-mask:var(--tenka-mark) center / contain no-repeat;
+  mask:var(--tenka-mark) center / contain no-repeat;
+}
+.brand-mark{
+  width:24px;
+  height:30px;
+  flex:none;
+}
+.loader-logo{
+  width:82px;
+  height:98px;
+}
+.brand span{
+  display:inline-flex;
+  align-items:center;
+  gap:.08em;
+  font-size:0;
+  line-height:1;
+}
+.brand span::before{
+  content:"TENK";
+  font-size:13px;
+  letter-spacing:.18em;
+}
+.brand span::after{
+  content:"";
+  display:inline-block;
+  width:.82em;
+  height:1.08em;
+  background:currentColor;
+  -webkit-mask:var(--tenka-mark) center / contain no-repeat;
+  mask:var(--tenka-mark) center / contain no-repeat;
+  transform:translateY(.04em);
+  flex:0 0 auto;
+}
+@media(max-width:900px){
+  .brand-mark{width:22px;height:28px}
+}
