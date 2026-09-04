@@ -38,16 +38,19 @@ jobs:
           const context=await browser.newContext({viewport:{width:1920,height:1080},deviceScaleFactor:1,colorScheme:'light',reducedMotion:'no-preference'});
           const page=await context.newPage();
           await page.goto('http://127.0.0.1:8080/index.html',{waitUntil:'networkidle',timeout:90000});
-          await page.waitForTimeout(3000);
+          await page.waitForTimeout(2500);
           await page.evaluate(()=>{
             document.querySelector('.loader')?.classList.add('is-done');
             document.querySelectorAll('.cursor-dot,.cursor-ring,.service-preview').forEach(el=>el.style.display='none');
+            document.querySelectorAll('img').forEach(img=>img.loading='eager');
           });
 
+          // Force every real site photo to finish before any screenshot is accepted.
+          await page.waitForFunction(()=>[...document.images].every(img=>img.complete&&img.naturalWidth>0),{timeout:60000});
           const imageStatus=await page.evaluate(()=>[...document.images].map(img=>({src:img.currentSrc||img.src,ok:img.complete&&img.naturalWidth>0,w:img.naturalWidth,h:img.naturalHeight})));
           const failed=imageStatus.filter(x=>!x.ok);
           console.log('Images:',imageStatus.length,'loaded:',imageStatus.length-failed.length,'failed:',failed.length);
-          if(failed.length){console.error(JSON.stringify(failed,null,2));throw new Error(`Refusing to export: ${failed.length} site images did not load.`)}
+          if(failed.length)throw new Error(`Refusing to export: ${failed.length} site images did not load.`);
 
           const vh=1080;
           const geom=selector=>page.evaluate(sel=>{const el=document.querySelector(sel);if(!el)throw new Error(`Missing ${sel}`);const r=el.getBoundingClientRect();return{top:window.scrollY+r.top,height:r.height}},selector);
@@ -87,4 +90,4 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-# trigger 3
+# trigger 4
