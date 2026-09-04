@@ -33,7 +33,7 @@ jobs:
 
       - name: Capture actual site states
         run: |
-          cat > /tmp/capture.mjs <<'EOF'
+          cat > capture.mjs <<'EOF'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
 
@@ -54,7 +54,6 @@ jobs:
             });
           });
 
-          // Walk the document once so native lazy-loading and ScrollTrigger assets are all resolved.
           const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
           for (let y = 0; y < docHeight; y += 700) {
             await page.evaluate(v => window.scrollTo(0, v), y);
@@ -90,37 +89,20 @@ jobs:
             console.log(`captured ${name} @ ${Math.round(y)}`);
           }
 
-          // 01 Hero - exact first viewport after intro.
           await shot('01-hero', 0, 1000);
-
-          // 02 Manifesto - viewport centered on the real manifesto composition.
           await shot('02-manifesto', await yFor('.manifesto', 'center'), 1000);
-
-          // 03-05 Three actual pinned scrollytelling states.
           await shot('03-story-entender', await yFor('.story', 'progress', 0.10), 1100);
           await shot('04-story-traduzir', await yFor('.story', 'progress', 0.48), 1100);
           await shot('05-story-habitar', await yFor('.story', 'progress', 0.82), 1100);
-
-          // 06-07 Comparison section: title and the actual 50/50 Interior/Exterior slider state.
           await shot('06-comparacao-titulo', Math.max(0, (await yFor('.compare')) + 35), 900);
           await shot('07-comparacao-interior-exterior', await yFor('.compare-stage', 'center'), 900);
-
-          // 08-10 Real horizontal gallery at three positions.
           await shot('08-projetos-01', await yFor('.projects', 'progress', 0.04), 1100);
           await shot('09-projetos-02-03', await yFor('.projects', 'progress', 0.50), 1100);
           await shot('10-projetos-04', await yFor('.projects', 'progress', 0.94), 1100);
-
-          // 11 Services.
           await shot('11-servicos', await yFor('.services', 'center'), 950);
-
-          // 12 Philosophy.
           await shot('12-filosofia', await yFor('.philosophy', 'center'), 1000);
-
-          // 13-14 Process top and lower steps.
           await shot('13-processo-inicio', await yFor('.process'), 950);
           await shot('14-processo-final', Math.max(0, (await yFor('.process', 'center')) + 220), 950);
-
-          // 15 CTA, 16 lower CTA/footer.
           await shot('15-contato', await yFor('.cta', 'center'), 1100);
           const maxY = await page.evaluate(() => Math.max(0, document.documentElement.scrollHeight - innerHeight));
           await shot('16-final', maxY, 1000);
@@ -136,7 +118,7 @@ jobs:
           if (errors.length) console.log('Non-fatal browser messages:', errors.join('\n'));
           await browser.close();
           EOF
-          node /tmp/capture.mjs
+          node capture.mjs
 
       - name: Upload exact captures
         uses: actions/upload-artifact@v4
