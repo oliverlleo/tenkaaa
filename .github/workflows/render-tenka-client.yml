@@ -1,0 +1,147 @@
+name: Render TENKA client capture
+
+on:
+  push:
+    branches:
+      - refactor-motion-showcase
+    paths:
+      - '.github/workflows/render-tenka-client.yml'
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start local site
+        run: |
+          python3 -m http.server 8000 > /tmp/tenka-server.log 2>&1 &
+          sleep 2
+
+      - name: Capture actual site states
+        run: |
+          cat > /tmp/capture.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          fs.mkdirSync('tenka-captures', { recursive: true });
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+
+          const errors = [];
+          page.on('pageerror', e => errors.push(`PAGE: ${e.message}`));
+          page.on('requestfailed', r => errors.push(`REQUEST: ${r.url()} :: ${r.failure()?.errorText || 'failed'}`));
+
+          await page.goto('http://127.0.0.1:8000/index.html', { waitUntil: 'domcontentloaded', timeout: 120000 });
+          await page.waitForTimeout(1000);
+          await page.evaluate(() => {
+            document.querySelectorAll('img').forEach(img => {
+              img.loading = 'eager';
+              img.decoding = 'sync';
+            });
+          });
+
+          // Walk the document once so native lazy-loading and ScrollTrigger assets are all resolved.
+          const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+          for (let y = 0; y < docHeight; y += 700) {
+            await page.evaluate(v => window.scrollTo(0, v), y);
+            await page.waitForTimeout(90);
+          }
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.waitForTimeout(1800);
+          await page.evaluate(() => document.querySelector('.loader')?.classList.add('is-done'));
+          await page.waitForTimeout(600);
+
+          const broken = await page.$$eval('img', imgs => imgs.filter(i => !i.complete || i.naturalWidth === 0).map(i => i.currentSrc || i.src));
+          if (broken.length) {
+            console.error('BROKEN_IMAGES', JSON.stringify(broken, null, 2));
+            throw new Error(`${broken.length} site images did not load`);
+          }
+
+          async function yFor(selector, mode='top', progress=0) {
+            return await page.evaluate(({selector, mode, progress}) => {
+              const el = document.querySelector(selector);
+              if (!el) throw new Error(`Missing selector ${selector}`);
+              const top = el.offsetTop;
+              const h = el.offsetHeight;
+              if (mode === 'center') return Math.max(0, top + h/2 - innerHeight/2);
+              if (mode === 'progress') return Math.max(0, top + Math.max(0, h - innerHeight) * progress);
+              return Math.max(0, top);
+            }, {selector, mode, progress});
+          }
+
+          async function shot(name, y, settle=900) {
+            await page.evaluate(v => window.scrollTo(0, v), y);
+            await page.waitForTimeout(settle);
+            await page.screenshot({ path: `tenka-captures/${name}.png`, fullPage: false });
+            console.log(`captured ${name} @ ${Math.round(y)}`);
+          }
+
+          // 01 Hero - exact first viewport after intro.
+          await shot('01-hero', 0, 1000);
+
+          // 02 Manifesto - viewport centered on the real manifesto composition.
+          await shot('02-manifesto', await yFor('.manifesto', 'center'), 1000);
+
+          // 03-05 Three actual pinned scrollytelling states.
+          await shot('03-story-entender', await yFor('.story', 'progress', 0.10), 1100);
+          await shot('04-story-traduzir', await yFor('.story', 'progress', 0.48), 1100);
+          await shot('05-story-habitar', await yFor('.story', 'progress', 0.82), 1100);
+
+          // 06-07 Comparison section: title and the actual 50/50 Interior/Exterior slider state.
+          await shot('06-comparacao-titulo', Math.max(0, (await yFor('.compare')) + 35), 900);
+          await shot('07-comparacao-interior-exterior', await yFor('.compare-stage', 'center'), 900);
+
+          // 08-10 Real horizontal gallery at three positions.
+          await shot('08-projetos-01', await yFor('.projects', 'progress', 0.04), 1100);
+          await shot('09-projetos-02-03', await yFor('.projects', 'progress', 0.50), 1100);
+          await shot('10-projetos-04', await yFor('.projects', 'progress', 0.94), 1100);
+
+          // 11 Services.
+          await shot('11-servicos', await yFor('.services', 'center'), 950);
+
+          // 12 Philosophy.
+          await shot('12-filosofia', await yFor('.philosophy', 'center'), 1000);
+
+          // 13-14 Process top and lower steps.
+          await shot('13-processo-inicio', await yFor('.process'), 950);
+          await shot('14-processo-final', Math.max(0, (await yFor('.process', 'center')) + 220), 950);
+
+          // 15 CTA, 16 lower CTA/footer.
+          await shot('15-contato', await yFor('.cta', 'center'), 1100);
+          const maxY = await page.evaluate(() => Math.max(0, document.documentElement.scrollHeight - innerHeight));
+          await shot('16-final', maxY, 1000);
+
+          fs.writeFileSync('tenka-captures/verification.json', JSON.stringify({
+            viewport: { width: 1440, height: 900 },
+            brokenImages: broken,
+            pageErrors: errors,
+            screenshotCount: 16,
+            source: 'refactor-motion-showcase'
+          }, null, 2));
+
+          if (errors.length) console.log('Non-fatal browser messages:', errors.join('\n'));
+          await browser.close();
+          EOF
+          node /tmp/capture.mjs
+
+      - name: Upload exact captures
+        uses: actions/upload-artifact@v4
+        with:
+          name: tenka-site-exact-captures
+          path: tenka-captures/
+          if-no-files-found: error
+          retention-days: 2
