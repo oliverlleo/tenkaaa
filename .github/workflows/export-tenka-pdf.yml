@@ -1,0 +1,183 @@
+name: Export TENKA real-site PDF
+
+on:
+  push:
+    branches: [refactor-motion-showcase]
+    paths:
+      - '.github/workflows/export-tenka-pdf.yml'
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start local site
+        run: |
+          python3 -m http.server 8080 > /tmp/tenka-http.log 2>&1 &
+          sleep 2
+
+      - name: Capture real rendered states and build PDF
+        run: |
+          cat > /tmp/export-tenka.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+          import path from 'path';
+
+          const OUT = 'tenka-export';
+          const SHOTS = path.join(OUT, 'shots');
+          fs.mkdirSync(SHOTS, { recursive: true });
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({
+            viewport: { width: 1920, height: 1080 },
+            deviceScaleFactor: 1,
+            colorScheme: 'light',
+            reducedMotion: 'no-preference'
+          });
+          const page = await context.newPage();
+          await page.goto('http://127.0.0.1:8080/index.html', { waitUntil: 'networkidle', timeout: 90000 });
+          await page.waitForTimeout(3000);
+
+          // Make sure the real page is fully ready and remove only browser-only pointer artifacts.
+          await page.evaluate(() => {
+            document.querySelector('.loader')?.classList.add('is-done');
+            document.querySelectorAll('.cursor-dot,.cursor-ring,.service-preview').forEach(el => el.style.display = 'none');
+          });
+
+          // Verify that every architectural image actually loaded before exporting.
+          const imageStatus = await page.evaluate(() => [...document.images].map(img => ({
+            src: img.currentSrc || img.src,
+            ok: img.complete && img.naturalWidth > 0,
+            w: img.naturalWidth,
+            h: img.naturalHeight
+          })));
+          const failed = imageStatus.filter(x => !x.ok);
+          console.log('Images:', imageStatus.length, 'loaded:', imageStatus.length - failed.length, 'failed:', failed.length);
+          if (failed.length) {
+            console.error(JSON.stringify(failed, null, 2));
+            throw new Error(`Refusing to export: ${failed.length} site images did not load.`);
+          }
+
+          const vh = 1080;
+          const geom = async selector => page.evaluate(sel => {
+            const el = document.querySelector(sel);
+            if (!el) throw new Error(`Missing ${sel}`);
+            const r = el.getBoundingClientRect();
+            return { top: window.scrollY + r.top, height: r.height };
+          }, selector);
+
+          const scrollTo = async y => {
+            await page.evaluate(v => window.scrollTo(0, v), y);
+            await page.waitForTimeout(1700); // allow scrubbed GSAP timelines to settle
+          };
+
+          const capture = async (name, y) => {
+            await scrollTo(Math.max(0, Math.round(y)));
+            await page.screenshot({ path: path.join(SHOTS, `${name}.png`), fullPage: false });
+            console.log('Captured', name, 'at', Math.round(y));
+          };
+
+          // 01 Hero — exactly as the site opens after the loader.
+          await capture('01-hero', 0);
+
+          // 02 Manifesto — centered in viewport, after its real word animation has entered.
+          let g = await geom('.manifesto');
+          await capture('02-manifesto', g.top + Math.max(0, (g.height - vh) * 0.48));
+
+          // 03–05 Story — three actual scroll-driven visual states.
+          g = await geom('.story');
+          const storyTravel = Math.max(1, g.height - vh);
+          await capture('03-story-entender', g.top + storyTravel * 0.12);
+          await capture('04-story-traduzir', g.top + storyTravel * 0.48);
+          await capture('05-story-habitar', g.top + storyTravel * 0.82);
+
+          // 06 Interior / Exterior comparison — actual 50/50 state.
+          g = await geom('.compare');
+          await capture('06-interior-exterior', g.top + Math.max(0, (g.height - vh) * 0.48));
+
+          // 07–10 Horizontal project gallery — all four real scroll positions.
+          g = await geom('.projects');
+          const projectTravel = Math.max(1, g.height - vh);
+          await capture('07-projeto-casa-alma', g.top + projectTravel * 0.04);
+          await capture('08-projeto-apartamento-luz', g.top + projectTravel * 0.34);
+          await capture('09-projeto-casa-entre', g.top + projectTravel * 0.67);
+          await capture('10-projeto-refugio-06', g.top + projectTravel * 0.96);
+
+          // 11 Services.
+          g = await geom('.services');
+          await capture('11-servicos', g.top + Math.max(0, (g.height - vh) * 0.45));
+
+          // 12 Philosophy.
+          g = await geom('.philosophy');
+          await capture('12-filosofia', g.top + Math.max(0, (g.height - vh) * 0.50));
+
+          // 13–14 Process, preserving its actual long-section composition.
+          g = await geom('.process');
+          const processTravel = Math.max(1, g.height - vh);
+          await capture('13-processo-inicio', g.top + processTravel * 0.12);
+          await capture('14-processo-etapas', g.top + processTravel * 0.82);
+
+          // 15 Final CTA.
+          g = await geom('.cta');
+          await capture('15-contato', g.top + Math.max(0, (g.height - vh) * 0.50));
+
+          // Build a PDF where each page IS the real browser capture.
+          const shotNames = fs.readdirSync(SHOTS).filter(x => x.endsWith('.png')).sort();
+          const pages = shotNames.map((file, i) => {
+            const href = i === shotNames.length - 1
+              ? 'https://ig.me/m/tenkaarquitetura'
+              : 'https://oliverlleo.github.io/tenkaaa/';
+            return `<section class="page"><img src="shots/${file}" alt="TENKA"><a href="${href}" target="_blank" aria-label="Abrir experiência TENKA"></a></section>`;
+          }).join('\n');
+
+          const presentation = `<!doctype html><html><head><meta charset="utf-8"><style>
+            @page{size:1920px 1080px;margin:0}
+            *{box-sizing:border-box}html,body{margin:0;padding:0;background:#000}
+            .page{position:relative;width:1920px;height:1080px;overflow:hidden;break-after:page;page-break-after:always}
+            .page:last-child{break-after:auto;page-break-after:auto}
+            .page img{display:block;width:1920px;height:1080px;object-fit:cover}
+            .page a{position:absolute;inset:0;z-index:3}
+          </style></head><body>${pages}</body></html>`;
+          fs.writeFileSync('tenka-presentation.html', presentation);
+
+          const pdfPage = await context.newPage();
+          await pdfPage.goto('http://127.0.0.1:8080/tenka-presentation.html', { waitUntil: 'networkidle' });
+          await pdfPage.pdf({
+            path: path.join(OUT, 'TENKA_Site_Real_Interativo.pdf'),
+            width: '1920px',
+            height: '1080px',
+            margin: { top: '0', right: '0', bottom: '0', left: '0' },
+            printBackground: true,
+            preferCSSPageSize: true
+          });
+
+          fs.writeFileSync(path.join(OUT, 'image-status.json'), JSON.stringify(imageStatus, null, 2));
+          await browser.close();
+          NODE
+          node /tmp/export-tenka.mjs
+
+      - name: Verify generated PDF exists
+        run: |
+          test -s tenka-export/TENKA_Site_Real_Interativo.pdf
+          test $(find tenka-export/shots -name '*.png' | wc -l) -eq 15
+          ls -lh tenka-export/TENKA_Site_Real_Interativo.pdf tenka-export/shots/*.png
+
+      - name: Upload PDF and verification captures
+        uses: actions/upload-artifact@v4
+        with:
+          name: tenka-real-site-pdf
+          path: tenka-export/
+          if-no-files-found: error
+          retention-days: 1
