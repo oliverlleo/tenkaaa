@@ -50,13 +50,11 @@ jobs:
           await page.goto('http://127.0.0.1:8080/index.html', { waitUntil: 'networkidle', timeout: 90000 });
           await page.waitForTimeout(3000);
 
-          // Make sure the real page is fully ready and remove only browser-only pointer artifacts.
           await page.evaluate(() => {
             document.querySelector('.loader')?.classList.add('is-done');
             document.querySelectorAll('.cursor-dot,.cursor-ring,.service-preview').forEach(el => el.style.display = 'none');
           });
 
-          // Verify that every architectural image actually loaded before exporting.
           const imageStatus = await page.evaluate(() => [...document.images].map(img => ({
             src: img.currentSrc || img.src,
             ok: img.complete && img.naturalWidth > 0,
@@ -80,7 +78,7 @@ jobs:
 
           const scrollTo = async y => {
             await page.evaluate(v => window.scrollTo(0, v), y);
-            await page.waitForTimeout(1700); // allow scrubbed GSAP timelines to settle
+            await page.waitForTimeout(1700);
           };
 
           const capture = async (name, y) => {
@@ -89,25 +87,20 @@ jobs:
             console.log('Captured', name, 'at', Math.round(y));
           };
 
-          // 01 Hero — exactly as the site opens after the loader.
           await capture('01-hero', 0);
 
-          // 02 Manifesto — centered in viewport, after its real word animation has entered.
           let g = await geom('.manifesto');
           await capture('02-manifesto', g.top + Math.max(0, (g.height - vh) * 0.48));
 
-          // 03–05 Story — three actual scroll-driven visual states.
           g = await geom('.story');
           const storyTravel = Math.max(1, g.height - vh);
           await capture('03-story-entender', g.top + storyTravel * 0.12);
           await capture('04-story-traduzir', g.top + storyTravel * 0.48);
           await capture('05-story-habitar', g.top + storyTravel * 0.82);
 
-          // 06 Interior / Exterior comparison — actual 50/50 state.
           g = await geom('.compare');
           await capture('06-interior-exterior', g.top + Math.max(0, (g.height - vh) * 0.48));
 
-          // 07–10 Horizontal project gallery — all four real scroll positions.
           g = await geom('.projects');
           const projectTravel = Math.max(1, g.height - vh);
           await capture('07-projeto-casa-alma', g.top + projectTravel * 0.04);
@@ -115,25 +108,20 @@ jobs:
           await capture('09-projeto-casa-entre', g.top + projectTravel * 0.67);
           await capture('10-projeto-refugio-06', g.top + projectTravel * 0.96);
 
-          // 11 Services.
           g = await geom('.services');
           await capture('11-servicos', g.top + Math.max(0, (g.height - vh) * 0.45));
 
-          // 12 Philosophy.
           g = await geom('.philosophy');
           await capture('12-filosofia', g.top + Math.max(0, (g.height - vh) * 0.50));
 
-          // 13–14 Process, preserving its actual long-section composition.
           g = await geom('.process');
           const processTravel = Math.max(1, g.height - vh);
           await capture('13-processo-inicio', g.top + processTravel * 0.12);
           await capture('14-processo-etapas', g.top + processTravel * 0.82);
 
-          // 15 Final CTA.
           g = await geom('.cta');
           await capture('15-contato', g.top + Math.max(0, (g.height - vh) * 0.50));
 
-          // Build a PDF where each page IS the real browser capture.
           const shotNames = fs.readdirSync(SHOTS).filter(x => x.endsWith('.png')).sort();
           const pages = shotNames.map((file, i) => {
             const href = i === shotNames.length - 1
@@ -181,3 +169,5 @@ jobs:
           path: tenka-export/
           if-no-files-found: error
           retention-days: 1
+
+# trigger 2
