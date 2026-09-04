@@ -1,2 +1,8 @@
 @import url('./styles-a.css');
 @import url('./styles-b.css');
+
+/* Compare section: Interior / Exterior */
+.compare-label.before{font-size:0}
+.compare-label.before::after{content:"Interior";font-size:9px}
+.compare-label.after{font-size:0}
+.compare-label.after::after{content:"Exterior";font-size:9px}
