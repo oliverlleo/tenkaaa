@@ -1,0 +1,62 @@
+:root{
+  --ink:#0b0a09;
+  --ink-soft:#181512;
+  --paper:#f2eee7;
+  --paper-2:#e7dfd4;
+  --terracotta:#b66343;
+  --clay:#d08b6c;
+  --line:rgba(255,255,255,.24);
+  --muted:rgba(255,255,255,.64);
+  --mx:50vw;
+  --my:50vh;
+  --ease:cubic-bezier(.22,.8,.22,1);
+  --frame:clamp(18px,2.6vw,44px);
+}
+:root{
+  --tenka-mark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20148%20190%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M6%2059%2059%2012v47h61v15H59v53c0%2012%204%2021%2012%2028%208%207%2019%2010%2034%2010%2012%200%2022-2%2030-6l6%2016c-10%205-22%208-38%208-20%200-36-5-47-16-11-10-17-24-17-42V74H6V59Z%27%2F%3E%3C%2Fsvg%3E");
+}
+.boot-mark>*,.brand-mark>*{display:none}
+.boot-mark,.brand-mark{background:currentColor;-webkit-mask:var(--tenka-mark) center/contain no-repeat;mask:var(--tenka-mark) center/contain no-repeat}
+
+*{box-sizing:border-box}
+html{scroll-behavior:auto;background:var(--ink);color:var(--paper);overflow-x:hidden}
+body{margin:0;font-family:"Manrope",system-ui,sans-serif;background:var(--ink);color:var(--paper);overflow-x:hidden;cursor:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0}
+img{display:block;width:100%;height:100%;object-fit:cover}
+main{position:relative;z-index:2}
+.scene{position:relative}
+.sticky-stage{position:sticky;top:0;width:100%;height:100svh;overflow:hidden;isolation:isolate}
+.eyebrow,.mono-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+.eyebrow{color:rgba(255,255,255,.68)}
+.serif-word,em{font-family:"Bodoni Moda",Georgia,serif;font-style:italic;font-weight:400}
+.no-js .boot{display:none}
+.no-js body{cursor:auto}
+
+.boot{position:fixed;inset:0;z-index:10000;background:var(--ink);display:grid;place-items:center;transition:opacity .7s ease,visibility .7s ease}
+.boot.is-done{opacity:0;visibility:hidden;pointer-events:none}
+.boot-frame{position:absolute;inset:var(--frame);border:1px solid rgba(255,255,255,.16)}
+.boot-center{display:grid;justify-items:center;gap:22px;position:relative;z-index:2}
+.boot-mark{width:66px;color:var(--paper)}
+.boot-copy{text-align:center;text-transform:uppercase;letter-spacing:.28em;font-size:15px}
+.boot-copy small{display:block;margin-top:10px;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.48)}
+.boot-progress{position:absolute;left:var(--frame);right:var(--frame);bottom:var(--frame);height:1px;background:rgba(255,255,255,.14);overflow:hidden}
+.boot-progress i{display:block;width:100%;height:100%;background:var(--paper);transform:scaleX(0);transform-origin:left}
+#cinema-gl{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;opacity:.62;mix-blend-mode:screen}
+.film-grain{position:fixed;inset:-50%;z-index:7;pointer-events:none;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");animation:grain .22s steps(2) infinite}
+@keyframes grain{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(1.5%,1%,0)}50%{transform:translate3d(-1%,1.4%,0)}75%{transform:translate3d(1%,-1.2%,0)}100%{transform:translate3d(-1.2%,-.8%,0)}}
+.cursor{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;mix-blend-mode:difference}
+.cursor i{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
+.cursor b{position:absolute;width:42px;height:42px;border:1px solid rgba(255,255,255,.7);border-radius:50%;transform:translate(-50%,-50%);transition:width .25s ease,height .25s ease,background .25s ease}
+.cursor.is-active b{width:70px;height:70px;background:rgba(255,255,255,.08)}
+.film-frame{position:fixed;inset:0;z-index:8;pointer-events:none;color:rgba(255,255,255,.72);font-size:8px;letter-spacing:.19em;text-transform:uppercase}
+.frame-corner{position:absolute;width:18px;height:18px}
+.frame-corner:before,.frame-corner:after{content:"";position:absolute;background:rgba(255,255,255,.34)}
+.frame-corner:before{width:18px;height:1px}.frame-corner:after{width:1px;height:18px}
+.frame-corner.tl{left:var(--frame);top:var(--frame)}.frame-corner.tr{right:var(--frame);top:var(--frame);transform:rotate(90deg)}.frame-corner.br{right:var(--frame);bottom:var(--frame);transform:rotate(180deg)}.frame-corner.bl{left:var(--frame);bottom:var(--frame);transform:rotate(-90deg)}
+.frame-left{position:absolute;left:14px;top:50%;writing-mode:vertical-rl;transform:rotate(180deg) translateY(50%)}.frame-right{position:absolute;right:14px;top:50%;writing-mode:vertical-rl;transform:translateY(-50%)}
+.chapter-readout{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;white-space:nowrap}.chapter-readout i{width:34px;height:1px;background:currentColor;opacity:.55}
+.nav{position:fixed;z-index:40;left:var(--frame);right:var(--frame);top:var(--frame);display:flex;align-items:center;justify-content:space-between;mix-blend-mode:difference;color:#fff;pointer-events:none}.nav>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:11px;font-size:12px;letter-spacing:.18em;font-weight:600}.brand-mark{width:27px;height:27px}
+.menu-toggle{display:flex;align-items:center;gap:12px;text-transform:uppercase;font-size:9px;letter-spacing:.18em}.menu-toggle i{display:block;width:34px;height:1px;background:currentColor;position:relative}.menu-toggle i:after{content:"";position:absolute;right:0;top:-6px;width:22px;height:1px;background:currentColor;transition:width .3s ease}.menu-toggle:hover i:after{width:34px}
+.menu{position:fixed;right:0;top:0;width:min(520px,100vw);height:100svh;background:rgba(11,10,9,.97);backdrop-filter:blur(16px);display:flex;flex-direction:column;justify-content:center;padding:10vh 8vw;gap:2vh;transform:translateX(102%);transition:transform .6s var(--ease);border-left:1px solid rgba(255,255,255,.12);mix-blend-mode:normal}.nav.is-open .menu{transform:translateX(0)}.menu a{font-family:"Bodoni Moda",serif;font-size:clamp(42px,6vw,76px);line-height:.95;transition:color .25s ease,transform .25s ease}.menu a:hover{color:var(--clay);transform:translateX(8px)}
