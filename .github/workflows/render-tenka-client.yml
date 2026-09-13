@@ -50,9 +50,10 @@ jobs:
 
           async function prepare(page){
             await page.goto('http://127.0.0.1:8000/index.html', { waitUntil:'domcontentloaded', timeout:120000 });
-            await page.waitForTimeout(2200);
+            await page.waitForFunction(() => window.__TENKA_RUNTIME__, null, {timeout:15000});
+            await page.waitForTimeout(1000);
             await page.evaluate(() => document.querySelector('.boot')?.classList.add('is-done'));
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(300);
             const missing = await page.evaluate(selectors => selectors.filter(s => !document.querySelector(s)), critical);
             if(missing.length) throw new Error(`Missing critical selectors: ${missing.join(', ')}`);
           }
@@ -61,13 +62,19 @@ jobs:
             return page.evaluate(({selector,progress}) => {
               const el=document.querySelector(selector);
               if(!el) throw new Error(`Missing selector ${selector}`);
+              const top=el.getBoundingClientRect().top+window.scrollY;
               const travel=Math.max(0,el.offsetHeight-innerHeight);
-              return Math.max(0,el.offsetTop+travel*progress);
+              return Math.max(0,top+travel*progress);
             },{selector,progress});
           }
 
-          async function shot(page,name,y,settle=700){
-            await page.evaluate(v=>window.scrollTo(0,v),y);
+          async function shot(page,name,y,settle=450){
+            await page.evaluate(v=>{
+              const rt=window.__TENKA_RUNTIME__;
+              if(rt?.lenis) rt.lenis.scrollTo(v,{immediate:true,force:true});
+              else window.scrollTo(0,v);
+              rt?.ScrollTrigger?.update?.();
+            },y);
             await page.waitForTimeout(settle);
             await page.screenshot({path:`tenka-verification/${name}.png`,fullPage:false});
           }
@@ -80,12 +87,12 @@ jobs:
             const overflow=await page.evaluate(()=>({scrollWidth:document.documentElement.scrollWidth,innerWidth,delta:document.documentElement.scrollWidth-innerWidth}));
             if(overflow.delta>3) throw new Error(`${name}: horizontal overflow ${overflow.delta}px`);
             const broken=await page.$$eval('img',imgs=>imgs.filter(i=>!i.complete||i.naturalWidth===0).map(i=>i.currentSrc||i.src));
-            if(broken.length) throw new Error(`${name}: ${broken.length} broken images`);
-            const globals=await page.evaluate(()=>({gsap:!!window.gsap,scrollTrigger:!!window.ScrollTrigger,bootDone:document.querySelector('.boot')?.classList.contains('is-done')}));
-            if(!globals.gsap||!globals.scrollTrigger) throw new Error(`${name}: GSAP runtime unavailable`);
+            if(broken.length){console.error('BROKEN',broken);throw new Error(`${name}: ${broken.length} broken images`)}
+            const globals=await page.evaluate(()=>({gsap:!!window.gsap,scrollTrigger:!!window.ScrollTrigger,bootDone:document.querySelector('.boot')?.classList.contains('is-done'),runtime:!!window.__TENKA_RUNTIME__}));
+            if(!globals.gsap||!globals.scrollTrigger||!globals.runtime) throw new Error(`${name}: cinematic runtime unavailable`);
 
             if(name==='desktop'){
-              await shot(page,'desktop-01-hero',0,900);
+              await shot(page,'desktop-01-hero',0,700);
               await shot(page,'desktop-02-manifesto',await yFor(page,'.manifesto',.46));
               await shot(page,'desktop-03-entender',await yFor(page,'.story',.12));
               await shot(page,'desktop-04-traduzir',await yFor(page,'.story',.49));
@@ -98,14 +105,14 @@ jobs:
               await shot(page,'desktop-11-processo',await yFor(page,'.process',.63));
               await shot(page,'desktop-12-epilogo',await yFor(page,'.outro',.38));
               await page.evaluate(()=>document.querySelector('[data-open-project="0"]')?.click());
-              await page.waitForTimeout(700);
+              await page.waitForTimeout(650);
               const open=await page.$eval('.project-modal',el=>el.classList.contains('is-open')&&el.getAttribute('aria-hidden')==='false');
               if(!open) throw new Error('desktop: project modal did not open');
               await page.screenshot({path:'tenka-verification/desktop-13-project-modal.png',fullPage:false});
               await page.keyboard.press('Escape');
-              await page.waitForTimeout(450);
+              await page.waitForTimeout(400);
             }else{
-              await shot(page,'mobile-01-hero',0,700);
+              await shot(page,'mobile-01-hero',0,600);
               await shot(page,'mobile-02-story',await yFor(page,'.story',.49));
               await shot(page,'mobile-03-projects',await yFor(page,'.projects',.54));
               await shot(page,'mobile-04-services',await yFor(page,'.services',.55));
