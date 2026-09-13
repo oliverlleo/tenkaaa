@@ -1,0 +1,61 @@
+/* responsive */
+@media (max-width: 900px){
+  :root{--frame:16px}
+  body{cursor:auto}
+  #cinema-gl{opacity:.35}
+  .cursor{display:none}
+  .film-frame{display:none}
+  .nav{left:18px;right:18px;top:18px}
+  .brand{font-size:10px}.brand-mark{width:24px;height:24px}
+  .menu-toggle{cursor:pointer}
+  .menu{width:100%;padding:16vh 11vw 10vh}.menu a{font-size:15vw}
+  .hero{height:245svh}
+  .hero-backdrop{inset:-2%;transform:scale(1.04)}
+  .hero-aperture{left:50%;top:42%;width:62vw;height:48vh}
+  .aperture-image{inset:-22vh -19vw;width:100vw;height:100svh}
+  .hero-copy{left:7vw;right:7vw;top:54%}
+  .hero-title{font-size:clamp(62px,20vw,112px);line-height:.83}.hero-line-offset{padding-left:9vw}
+  .hero-caption{position:relative;right:auto;top:auto;margin-top:5vh;width:78vw;grid-template-columns:34px 1fr}.hero-caption p{font-size:11px}.hero-timecode{left:7vw;bottom:7vh}.scroll-hint{right:7vw;bottom:7vh}
+  .manifesto{height:250svh}.manifesto-index{left:7vw}.manifesto-title{left:7vw;right:7vw;font-size:clamp(42px,11vw,74px);line-height:.95;gap:0 .2em}.manifesto-window{right:7vw;top:12vh;width:35vw;height:18vh}.manifesto-side{right:7vw;left:7vw;bottom:8vh;width:auto;grid-template-columns:1fr}.manifesto-kicker{left:7vw;bottom:19vh}
+  .story{height:480svh}.story-copy-wrap{left:7vw;right:7vw;width:auto;top:52%;height:42vh}.story-copy h2{font-size:23vw}.story-copy p{width:78vw;font-size:12px}.story-chapters{left:7vw;bottom:7vh;gap:18px}.story-nav b{display:none}.story-visuals:after{background:linear-gradient(180deg,rgba(5,4,3,.18) 0%,rgba(5,4,3,.66) 65%,rgba(5,4,3,.8) 100%)}.tech-grid{background-size:18vw 18vw}
+  .transformation{height:320svh}.transformation-head{left:7vw;right:7vw;width:auto;top:8vh}.transformation-head h2{font-size:11vw}.transformation-stage{left:7vw;right:7vw;top:35vh;bottom:22vh}.transformation-note{left:7vw;right:7vw;bottom:6vh;width:auto}.transformation-note p{font-size:11px}.transformation-labels{font-size:7px;gap:12px}
+  .projects{height:520svh}.projects-intro{left:7vw;top:10vh}.projects-intro h2{font-size:18vw}.projects-intro p{width:78vw}.project-shot figure{left:7vw;right:7vw;top:34vh;bottom:9vh}.project-number{left:7vw;bottom:7vh;font-size:31vw;z-index:1}.project-title{left:11vw;bottom:16vh}.project-title h3{font-size:16vw;max-width:80vw}.project-place{right:10vw;bottom:10vh}.project-open{right:10vw;top:38vh}.project-reel-index{left:auto;right:7vw;top:20vh;transform:none;display:flex;align-items:center}.project-reel-index i{width:60px;height:1px}.project-reel-index i:after{transform:translateX(-100%)}
+  .services{height:330svh}.services-heading{left:7vw;right:7vw;top:8vh}.services-heading h2{font-size:12vw}.services-shade{background:linear-gradient(180deg,rgba(8,6,5,.62) 0%,rgba(8,6,5,.78) 55%,rgba(8,6,5,.94) 100%)}.services-list{left:7vw;right:7vw;bottom:7vh}.service-line{grid-template-columns:35px 1fr;padding:17px 0}.service-line p{grid-column:2;font-size:10px;margin-top:8px}.service-line h3{font-size:11vw}
+  .philosophy{height:190svh}.philosophy-sticky{padding:0 7vw}.philosophy-sticky h2{font-size:18vw}.philosophy-sticky>p{left:7vw;right:7vw;bottom:10vh;width:auto}.philosophy-words{gap:4vw;flex-wrap:wrap}
+  .process{height:360svh}.process-title{left:7vw;right:7vw;width:auto;top:8vh}.process-title h2{font-size:11vw}.process-rail{left:7vw;top:34vh;bottom:8vh}.process-steps{left:13vw;right:7vw;top:32vh;bottom:10vh}.process-step h3{font-size:24vw}.process-step p{font-size:12px}.process-blueprint{display:none}
+  .outro{height:230svh}.outro-copy{left:7vw;right:7vw}.outro-copy h2{font-size:19vw}.outro-actions{flex-direction:column;align-items:flex-start}.cta-link{cursor:pointer}.credits{left:7vw;right:7vw;font-size:7px;gap:20px}
+  footer{min-height:180px;padding:34px 7vw;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px}
+  .project-modal-media{left:0;inset:0}.project-modal-shade{background:linear-gradient(180deg,rgba(10,9,8,.28) 0 32%,rgba(10,9,8,.92) 72%,#0a0908 100%)}.project-modal-copy{left:7vw;right:7vw;top:auto;bottom:12vh;transform:none;width:auto}.modal-title{font-size:20vw}.modal-note{display:none}.project-modal-close{right:7vw;top:4vh;cursor:pointer}.modal-index{left:7vw;bottom:5vh}.modal-prev,.modal-next{bottom:5vh;cursor:pointer}.modal-prev{right:18vw}.modal-next{right:8vw}
+}
+
+@media (max-width: 560px){
+  .hero-eyebrow{font-size:8px}.hero-title{font-size:19vw}.hero-caption p{font-size:10px}.hero-aperture{height:44vh}
+  .manifesto-title{font-size:10.6vw}.story-copy h2{font-size:22vw}.project-place{font-size:7px}.project-open{font-size:7px}.service-line h3{font-size:10vw}
+}
+
+/* reduced motion: all content visible, no sticky traps */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+  body{cursor:auto}
+  #cinema-gl,.cursor,.film-grain{display:none!important}
+  .scene{height:auto!important;min-height:auto!important}
+  .sticky-stage{position:relative!important;height:auto!important;min-height:100svh!important;overflow:visible!important}
+  .hero-sticky,.manifesto-sticky,.story-sticky,.transformation-sticky,.projects-sticky,.services-sticky,.philosophy-sticky,.process-sticky,.outro-sticky{padding-top:100px;padding-bottom:90px}
+  .hero-world,.hero-vignette,.hero-timecode,.scroll-hint,.manifesto-window,.story-progress,.technical-layer,.project-reel-index,.process-rail,.outro-shutter{display:none!important}
+  .hero{background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=82');background-size:cover;background-position:center}
+  .hero-copy,.manifesto-title,.manifesto-side,.manifesto-kicker,.manifesto-index,.transformation-head,.transformation-stage,.transformation-note,.projects-intro,.services-heading,.services-list,.process-title,.process-steps,.outro-copy,.credits{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;margin:0 7vw!important;width:auto!important}
+  .hero-copy{padding:18vh 0}.hero-caption{position:relative!important;top:auto!important;right:auto!important;margin-top:5vh}
+  .manifesto-title{padding:15vh 0 8vh}.manifesto-side{padding-bottom:8vh}
+  .story-visuals{position:absolute}.story-copy-wrap{position:relative;left:auto;top:auto;transform:none;width:auto;height:auto;margin:0 7vw;z-index:4;padding:22vh 0 10vh}.story-copy{position:relative;opacity:1!important;transform:none!important;margin-bottom:7vh}.story-chapters{display:none}
+  .transformation-stage{height:60vh;margin-top:7vh!important}.state-after{clip-path:inset(0 0 0 50%)}.drawing-overlay{opacity:.5}.transformation-note{padding:6vh 0}
+  .project-reel{position:relative;padding:6vh 0}.project-shot{position:relative;opacity:1!important;transform:none!important;pointer-events:auto;min-height:78vh;margin-bottom:4vh}.project-shot figure{left:7vw;right:7vw;top:0;bottom:0}.project-number,.project-title,.project-place,.project-open{z-index:4}.projects-intro{padding:10vh 0}
+  .services{background:#15110e}.services-backdrops{position:absolute}.services-heading{padding-top:12vh}.services-list{padding:10vh 0}.service-line{opacity:1!important;transform:none!important}.services-sticky{min-height:130vh!important}
+  .philosophy-sticky{padding:16vh 7vw}.philosophy-sticky>p{position:relative;right:auto;bottom:auto;width:auto;margin-top:8vh}.philosophy-words{position:relative;left:auto;right:auto;bottom:auto;margin-top:8vh}
+  .process-title{padding-top:12vh}.process-steps{padding:7vh 0}.process-step{position:relative;opacity:1!important;transform:none!important;margin-bottom:7vh}.process-blueprint{display:none}
+  .outro{background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.5)),url('https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=1600&q=82');background-size:cover;background-position:center}.outro-bg{display:none}.outro-copy{padding:24vh 0}.credits{padding-bottom:5vh}
+}
+
+
+::view-transition-old(root),::view-transition-new(root){animation-duration:.48s;animation-timing-function:cubic-bezier(.22,.8,.22,1)}
+html.reduced-runtime body{cursor:auto}
+html.reduced-runtime .boot{display:none}
